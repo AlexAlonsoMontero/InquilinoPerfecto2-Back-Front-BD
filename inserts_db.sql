@@ -33,3 +33,65 @@ INSERT INTO inmuebles (
 VALUES      (
             1,"CALLE","2021-1-12","CASA",0,0,12,"gRAN VÍA","2","1º","Oviedo","Asturias", "Asturias","España","36205",1,2
 );
+
+
+/*ANUNCIOS*/
+INSERT INTO anuncios (precio,fk_inmueble)
+VALUES(450,1);
+INSERT INTO anuncios (precio,fk_inmueble)
+VALUES(500,1);
+INSERT INTO anuncios (precio,fk_inmueble)
+VALUES(450,2);
+INSERT INTO anuncios (precio,fk_inmueble)
+VALUES(600,3);
+
+
+/*FOTOS INMUEBLES*/
+INSERT INTO fotos_inmuebles(url,fk_inmueble)
+VALUES("/prueba1/foto1.jpg",1);
+INSERT INTO fotos_inmuebles(url,fk_inmueble)
+VALUES("/prueba1/foto2.jpg",1);
+INSERT INTO fotos_inmuebles(url,fk_inmueble)
+VALUES("/prueba1/foto3.jpg",1);
+INSERT INTO fotos_inmuebles(url,fk_inmueble)
+VALUES("/prueba2/foto1.jpg",2);
+INSERT INTO fotos_inmuebles(url,fk_inmueble)
+VALUES("/prueba2/foto2.jpg",2);
+INSERT INTO fotos_inmuebles(url,fk_inmueble)
+VALUES("/prueba3/foto1.jpg",3);
+INSERT INTO fotos_inmuebles(url,fk_inmueble)
+VALUES("/prueba3/foto1.jpg",3);
+INSERT INTO fotos_inmuebles(url,fk_inmueble)
+VALUES("/prueba3/foto1.jpg",3);
+
+/*RESERVAS*/
+INSERT INTO reservas (fk_inmueble,fk_usuario_inquilino,fecha_entrada,fecha_salida)
+VALUES (1,2,"2021-1-20","2021-1-15");
+INSERT INTO reservas (fk_inmueble,fk_usuario_inquilino,fecha_entrada,fecha_salida)
+VALUES (1,3,"2021-2-20","2021-2-28");
+INSERT INTO reservas (fk_inmueble,fk_usuario_inquilino,fecha_entrada,fecha_salida)
+VALUES (2,3,"2021-1-20","2021-1-15");
+INSERT INTO reservas (fk_inmueble,fk_usuario_inquilino,fecha_entrada,fecha_salida)
+VALUES (2,3,"2021-4-20","2021-5-15");
+INSERT INTO reservas (fk_inmueble,fk_usuario_inquilino,fecha_entrada,fecha_salida)
+VALUES (2,3,"2021-1-20","2021-1-15");
+
+/*RESENAS INMUEBLES*/
+INSERT INTO resenas_inmuebles (
+    fk_inmuebleReserva,foto1,descripcion,calificacion
+)
+VALUES(1,"/fotoResena1/foto.jpg", "Reseñas de pruebas para ver como va", 2);
+INSERT INTO resenas_inmuebles (
+    fk_inmuebleReserva,foto1,descripcion,calificacion
+)
+VALUES(2,"/fotoResena2/foto.jpg", "Reseñas de pruebas para ver como va", 5);
+
+
+
+/*RESENAS INQUILINOS*/
+INSERT INTO resenas_inquilinos(
+    fk_inquilinoReserva,descripcion,calificacion
+)VALUES(1, "Reseñas de pruebas de inquilinopara ver como va", 2);
+INSERT INTO resenas_inquilinos(
+    fk_inquilinoReserva,descripcion,calificacion
+)VALUES(2, "Reseñas de pruebas de inquilino para ver como va", 5);

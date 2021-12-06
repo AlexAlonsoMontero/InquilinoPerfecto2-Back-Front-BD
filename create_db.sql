@@ -98,7 +98,7 @@ CREATE TABLE resenas_inmuebles(
     descripcion VARCHAR(512),
     calificacion SMALLINT,
     CONSTRAINT FK_resenaInmueble_reserva  FOREIGN KEY (fk_inmuebleReserva)
-    REFERENCES reservas(fk_inmueble),
+    REFERENCES reservas(id_reserva),
     CONSTRAINT PK_resenas_inmuebles PRIMARY KEY (id_resena)
 );
 
@@ -108,6 +108,6 @@ CREATE TABLE resenas_inquilinos(
     descripcion VARCHAR(512),
     calificacion SMALLINT,
     CONSTRAINT FK_resenaIngquilino_reserva  FOREIGN KEY (fk_inquilinoReserva)
-    REFERENCES reservas(fk_usuario_inquilino),
+    REFERENCES reservas(id_reserva),
     CONSTRAINT PK_resenas_inquilinos PRIMARY KEY (id_resena)
 );
