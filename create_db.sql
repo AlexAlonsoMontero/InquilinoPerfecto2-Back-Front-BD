@@ -8,7 +8,7 @@ CREATE TABLE usuarios(
 	password VARCHAR(64) NOT NULL,
 	email VARCHAR(256) NOT NULL,
 	tipo ENUM ('INQUILINO','CASERO','INQUILINO/CASERO','ADMINISTRADOR'),
-	activated_at TIMESTAMP DEFAULT NULL,
+	activated_at DATETIME DEFAULT NULL,
 	activated_code VARCHAR(64) DEFAULT NULL,
 	avatar VARCHAR(256) NOT NULL,
 	nombre VARCHAR(256) NOT NULL,
@@ -25,10 +25,10 @@ CREATE TABLE inmuebles (
 	id_inmueble INT UNSIGNED NOT NULL AUTO_INCREMENT,
     fk_usuario  INT UNSIGNED NOT NULL,
 	tipo_via ENUM ('CALLE','AVENIDA','CAMINO','CARRETERA','OTROS') NOT NULL,
-	fecha_alta TIMESTAMP DEFAULT NULL,
+	fecha_alta DATETIME DEFAULT NULL,
 	tipo_inmueble ENUM ('PISO','ESTUDIO','CASA','ADOSADO','OTROS'),
-	lng DECIMAL(9,6) NOT NULL DEFAULT 0,
-    lat DECIMAL(9,6) NOT NULL DEFAULT 0,
+	lng DECIMAL(9,6) DEFAULT 0,
+    lat DECIMAL(9,6) DEFAULT 0,
     metros_2 SMALLINT DEFAULT 0,
     calle VARCHAR(256) NOT NULL,
     numero VARCHAR (16),
@@ -49,7 +49,7 @@ CREATE TABLE inmuebles (
     piscina BOOLEAN DEFAULT FALSE,
 	wifi BOOLEAN DEFAULT FALSE,
 	visible BOOLEAN DEFAULT TRUE,
-	id_casero INT UNSIGNED NOT NULL,
+
     
     CONSTRAINT FK_inmuebles_usuarios FOREIGN KEY (fk_usuario)
     REFERENCES usuarios(id_usuario),
@@ -98,7 +98,7 @@ CREATE TABLE resenas_inmuebles(
     descripcion VARCHAR(512),
     calificacion SMALLINT,
     CONSTRAINT FK_resenaInmueble_reserva  FOREIGN KEY (fk_inmuebleReserva)
-    REFERENCES reservas(fk_inmueble),
+    REFERENCES reservas(id_reserva),
     CONSTRAINT PK_resenas_inmuebles PRIMARY KEY (id_resena)
 );
 
@@ -108,6 +108,6 @@ CREATE TABLE resenas_inquilinos(
     descripcion VARCHAR(512),
     calificacion SMALLINT,
     CONSTRAINT FK_resenaIngquilino_reserva  FOREIGN KEY (fk_inquilinoReserva)
-    REFERENCES reservas(fk_usuario_inquilino),
+    REFERENCES reservas(id_reserva),
     CONSTRAINT PK_resenas_inquilinos PRIMARY KEY (id_resena)
 );
