@@ -65,16 +65,16 @@ INSERT INTO fotos_inmuebles(url,fk_inmueble)
 VALUES("/prueba3/foto1.jpg",3);
 
 /*RESERVAS*/
-INSERT INTO reservas (fk_inmueble,fk_usuario_inquilino,fecha_entrada,fecha_salida)
-VALUES (1,2,"2021-1-20","2021-1-15");
-INSERT INTO reservas (fk_inmueble,fk_usuario_inquilino,fecha_entrada,fecha_salida)
-VALUES (1,3,"2021-2-20","2021-2-28");
-INSERT INTO reservas (fk_inmueble,fk_usuario_inquilino,fecha_entrada,fecha_salida)
-VALUES (2,3,"2021-1-20","2021-1-15");
-INSERT INTO reservas (fk_inmueble,fk_usuario_inquilino,fecha_entrada,fecha_salida)
-VALUES (2,3,"2021-4-20","2021-5-15");
-INSERT INTO reservas (fk_inmueble,fk_usuario_inquilino,fecha_entrada,fecha_salida)
-VALUES (2,3,"2021-1-20","2021-1-15");
+INSERT INTO reservas (fk_inmueble,fk_usuario_inquilino,fecha_entrada,fecha_salida,estado_reeserva)
+VALUES (1,2,"2021-1-20","2021-1-15","SOLICITADA");
+INSERT INTO reservas (fk_inmueble,fk_usuario_inquilino,fecha_entrada,fecha_salida,estado_reeserva)
+VALUES (1,3,"2021-2-20","2021-2-28","SOLICITADA");
+INSERT INTO reservas (fk_inmueble,fk_usuario_inquilino,fecha_entrada,fecha_salida,estado_reeserva)
+VALUES (2,3,"2021-1-20","2021-1-15","SOLICITADA");
+INSERT INTO reservas (fk_inmueble,fk_usuario_inquilino,fecha_entrada,fecha_salida,estado_reeserva)
+VALUES (2,3,"2021-4-20","2021-5-15","SOLICITADA");
+INSERT INTO reservas (fk_inmueble,fk_usuario_inquilino,fecha_entrada,fecha_salida,estado_reeserva)
+VALUES (2,3,"2021-1-20","2021-1-15","SOLICITADA");
 
 /*RESENAS INMUEBLES*/
 INSERT INTO resenas_inmuebles (

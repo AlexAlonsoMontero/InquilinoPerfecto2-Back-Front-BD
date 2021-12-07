@@ -82,6 +82,7 @@ CREATE TABLE reservas (
     fk_usuario_inquilino  INT UNSIGNED NOT NULL,
     fecha_entrada DATE,
     fecha_salida DATE,
+    estado_reeserva ENUM ("SOLICITADA","CANCELADA","ACEPTADA","RECHAZADA") NOT NULL DEFAULT "SOLICITADA",
     CONSTRAINT FK_reservas_idInmueble FOREIGN KEY (fk_inmueble)
     REFERENCES inmuebles(id_inmueble),
     CONSTRAINT FK_reservas_usuarioInquilino FOREIGN KEY (fk_usuario_inquilino)
