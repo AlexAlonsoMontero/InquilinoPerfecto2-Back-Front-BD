@@ -29,25 +29,25 @@ node server.js
 ```
     npm i -S nodemon
 ```
-    * Configuramos package.json -->  con npm start iniciamos nodemon
+* Configuramos package.json -->  con npm start iniciamos nodemon
     
-    ```
+```
       "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "nodemon server.js"
     },
-    ```
+```
 
 * Instalamos morgan, un registrador que nos muestra la info por consola. (Un logger)
 ```
 npm i morgan
 ```
-    * Configuramos server.js  -- server.js quedaría así
-    ```
+* Configuramos server.js  -- server.js quedaría así
+```
     const express = require('express');
     const morgan = require ('morgan')
 
     const app = express();
 
     app.use(morgan('combinee'));
-    ```
+```
