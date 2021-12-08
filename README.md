@@ -14,3 +14,40 @@ La primera versión fue el proyecto del bootcamp Hack  a Boss, esta versión es 
     - Desarrollo de consultas necesarias
 4. Back End
 5. Front end
+
+
+## Back-end
+* Iniciamos npm e instalación de Express
+
+```
+npm init
+npm install express --save
+node server.js
+```
+
+* Inatalamos nodemon nos ayudará en nuestro desarrollo ya que reiniciará automáticamente el servidor de Node.js a cada cambio que hagamos en nuestro código.
+```
+    npm i -S nodemon
+```
+    * Configuramos package.json -->  con npm start iniciamos nodemon
+    
+    ```
+      "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon server.js"
+    },
+    ```
+
+* Instalamos morgan, un registrador que nos muestra la info por consola. (Un logger)
+```
+npm i morgan
+```
+    * Configuramos server.js  -- server.js quedaría así
+    ```
+    const express = require('express');
+    const morgan = require ('morgan')
+
+    const app = express();
+
+    app.use(morgan('combinee'));
+    ```
