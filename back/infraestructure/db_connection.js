@@ -8,9 +8,9 @@ const getConnection = () => {
             pool = mysql.createPool({
                 connectionLimit:10,
                 host:process.env.DB_HOST,
-                database:'inmoweb2_0',
-                user:'root',
-                password:'root'
+                database:process.env.DB_DATABASENAME,
+                user:process.env.DB_USER,
+                password:process.env.DB_PASS
             })
         }
         return pool
@@ -27,7 +27,7 @@ const pruebaBd = async (request, response) =>{
     console.log(consulta[0])
     
     request.body= consulta[0]
-    response.send({info:"funciona",data:consulta[0]})
+    response.send({info:"usuarios",data:consulta[0]})
 }
 
 
