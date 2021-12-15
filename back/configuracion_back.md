@@ -53,3 +53,10 @@ node server.js
     console.log(`Server runing at http://${host}:${port}`)
     }); 
 ```
+
+# Configuración de conexión con base de datos
+*  Para realizar esta configuración instalaremos mysql2
+```
+    npm i mysql2
+```
+* Conexión a base de datos en /infraestructure/db.js

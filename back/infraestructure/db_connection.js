@@ -1,20 +1,34 @@
-const mysql = require('mysql2/promise')
-require('dotenv').config()
+const mysql = require('mysql2/promise');
+require('dotenv').config();
 
 const getConnection = () => {
-    let pool
-    if (!pool){
-        pool = mysql.createPool ({
-            connectionLimit: 10,
-            host: process.env.DB_HOST,
-            database:process.env.DB_DATABASENAME,
-            user: process.env.DB_USER,
-            password: process.env.DB_PASS
-            
-        })
+    try{
+        let pool
+        if (!pool){
+            pool = mysql.createPool({
+                connectionLimit:10,
+                host:process.env.DB_HOST,
+                database:'inmoweb2_0',
+                user:'root',
+                password:'root'
+            })
+        }
+        return pool
+    }catch(error){
+        console.log(error)
     }
-   
-    return pool
+    
+    
 }
 
-module.exports = { getConnection }
+const pruebaBd = async (request, response) =>{
+    const conection = getConnection()
+    const consulta = await conection.query("SELECT * FROM usuarios")
+    console.log(consulta[0])
+    
+    request.body= consulta[0]
+    response.send({info:"funciona",data:consulta[0]})
+}
+
+
+module.exports = { getConnection, pruebaBd }
