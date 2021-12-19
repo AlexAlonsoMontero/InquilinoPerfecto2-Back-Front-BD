@@ -21,14 +21,6 @@ const getConnection = () => {
     
 }
 
-const pruebaBd = async (request, response) =>{
-    const conection = getConnection()
-    const consulta = await conection.query("SELECT * FROM usuarios")
-    console.log(consulta[0])
-    
-    request.body= consulta[0]
-    response.send({info:"usuarios",data:consulta[0]})
-}
 
 
-module.exports = { getConnection, pruebaBd }
+module.exports = { getConnection }

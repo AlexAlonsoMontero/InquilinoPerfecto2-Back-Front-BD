@@ -1,20 +1,20 @@
 const express = require('express');
 const morgan = require ('morgan')
 
-const { pruebaBd } = require('./infraestructure/db_connection')
+const { getAllUsers } = require('./controllers/usercotrolers')
 
 const app = express();
 
 require('dotenv').config();
 
-app.use(morgan('combinee')); //formato: combined... ver doc https://www.npmjs.com/package/morgan
+app.use(morgan('combined')); //formato: combined... ver doc https://www.npmjs.com/package/morgan
 app.use(express.json())
 
 
 //ENDPOINT USERS
-const endpointGetUsers = '/users'
+const endpointGetUsers = '/api/users'
 
-app.get(endpointGetUsers,pruebaBd)
+app.get(endpointGetUsers,getAllUsers)
 
 let port = process.env.WEB_PORT
 let host = process.env.WEB_HOST

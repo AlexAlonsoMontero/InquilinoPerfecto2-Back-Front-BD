@@ -1,12 +1,13 @@
 const {getConnection} = require('../db_connection')
-const connection = getConnection()
+const conection = getConnection()
 
-const getUsers = async () =>{
+const getUsers = async (request, response) =>{
     try{
-        console.log(connection)
+        const consulta = await conection.query("SELECT * FROM usuarios")
+        response.send({"info": "usuarios", data:consulta[0] })
     }catch(error){
         console.warn(error)
     }
 }
 
-getUsers()
+module.exports = { getUsers }
