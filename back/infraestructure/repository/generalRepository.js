@@ -6,7 +6,8 @@ const conection = getConnection()
  * 
  * @param {string} table 
  * @returns {object}
- * @description Devuelve todos los datos que existan en la tabla pasada como parametro table
+ * @description Devuelve todos los datos que existan en la tabla pasada 
+ * como parametro table
  */
 const getAllItems = async (table) =>{
     const question = await conection.query(`SELECT * FROM ${table}`)
@@ -14,27 +15,73 @@ const getAllItems = async (table) =>{
 
 }
 
-const findItem = async (table,param) =>{
-    const question = (`SELECT * FROM ${table} WHERE `)
-    const condition = whereConstructor(param)
+/**
+ * 
+ * @param {string} table 
+ * @param {object} param Objetos de request.query donde quey es 
+ * la clave de búsqueda y los values el valor que buscamos
+ * @returns {[object]} Devuelve un objeto con los valores localizdos dela base de datos
+ * @description Construye con ayudas de otros métodos una consulta
+ *  con condiciones que nos vale para cualquier tabla y cualquier condicion simple
+ */
+const findItems = async (table,param) =>{
+    const sqlConditionOperator = 'AND'
+    const condition = `SELECT * FROM ${table} WHERE  ` + whereConstructor(param,sqlConditionOperator)
+    const question = await conection.query(condition, Object.values(param))
+    return question[0]
 }
 
 /**
  * 
- * @param {[object]} param 
+ * @param {[object]} param Objeto con las claves y los valoes correspondeintes id=2 por ejemplo
  * @returns {string}
- * @description Creamos una condición con la siguiente formual object.key = object.value
+ * @description Creamos una condición con la siguiente formula de ejemplo
+ *  object.key = object.value
  */
-const whereConstructor = (param) =>{
+const whereConstructor = (param, sqlConditionOperator) =>{
     let condition = ""
-    for (p of params){
-        condition += `${Object.keys(p)[0]}=${Object.values(p)[0]}`
+    let key = ""
+    operator = "="
+
+    for (let i = 0; i < Object.keys(param).length; i++){
+        keyOperator = getKeyOperator(Object.keys(param)[i])
+        key = keyOperator.key
+        operator = keyOperator.operator
+        condition += (i===0?`${key} ${operator} ? `: ` ${sqlConditionOperator} ${key} ${operator} ? `)
+        console.log(condition)
     }
     return condition
 }
 
+/**
+ * 
+ * @param {string} key 
+ * @returns {[{key:string, operator:string}]} Objeto con la clave de búsqueda y el string
+*  @description recibe un estring con la clave y el operador de búsqueda ylos separa
+*/
+const getKeyOperator = (key) => {
+    const separator ="$"
+    let keyOperator = {key:"",operator:"="}
+    if (key.split(separator).length>1){
+        switch (key.split(separator)[0]){
+            case 'from':
+                keyOperator.operator = '>='
+                break
+            case 'until':
+                keyOperator.operator = '<='
+                break
+            default:
+                keyOperator.operator = '='
+        }
+        keyOperator.key = key.split(separator)[1]
+    }else{
+        keyOperator.key = key.split(separator)[0]
+    }
+    return keyOperator
 
-module.exports = { getAllItems }
+}
+
+module.exports = { getAllItems, findItems }
 
 
 
