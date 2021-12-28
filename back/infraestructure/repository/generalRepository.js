@@ -83,7 +83,16 @@ const getKeyOperator = (key) => {
 
 }
 
-module.exports = { getAllItems, findItems }
+const addItem = async (table,objectUser)=>{
+    const values = Object.values(objectUser).map(val=>(typeof(val)==='string'?val=`'${val}'`:val))
+    const sentence = `INSERT INTO ${table} (${Object.keys(objectUser)}) VALUES (${values})`
+    console.log(sentence)
+    const result = await conection.query(sentence)
+    return result[0]
+}
+
+
+module.exports = { getAllItems, findItems, addItem }
 
 
 

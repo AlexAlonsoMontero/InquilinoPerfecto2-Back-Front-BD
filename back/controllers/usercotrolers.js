@@ -1,4 +1,5 @@
-const {getAllItems, findItems} = require('../infraestructure/repository/generalRepository')
+const { request } = require('express')
+const {getAllItems, findItems, addItem} = require('../infraestructure/repository/generalRepository')
 const table = 'usuarios'
 /**
  * 
@@ -36,4 +37,15 @@ const findUsers = async (request,response)=>{
     
 }
 
-module.exports =  { getAllUsers,findUsers }
+const addUser = async(request,response)=>{
+    try{
+        const result = await addItem(table, request.body)
+        response.status(201).send("Usuario creado correctamente")
+
+    }catch(error){
+        console.warn(error.message)
+        response.status(500).send("Internal server error")
+    }
+}
+
+module.exports =  { getAllUsers, findUsers, addUser}

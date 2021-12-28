@@ -1,7 +1,7 @@
 const express = require('express');
 const morgan = require ('morgan')
 
-const { getAllUsers,findUsers } = require('./controllers/usercotrolers')
+const { getAllUsers, findUsers, addUser } = require('./controllers/usercotrolers')
 
 const app = express();
 
@@ -14,9 +14,11 @@ app.use(express.json())
 //ENDPOINT USERS
 const endpointGetUsers = '/api/users'
 const endpointFindUsers = '/api/users/find'
+const endpointAddUser = '/api/users/'
 
 app.get(endpointGetUsers,getAllUsers)
 app.get(endpointFindUsers,findUsers)
+app.post(endpointAddUser, addUser)
 
 let port = process.env.WEB_PORT
 let host = process.env.WEB_HOST
