@@ -34,6 +34,7 @@ const findItems = async (table,param) =>{
 /**
  * 
  * @param {[object]} param Objeto con las claves y los valoes correspondeintes id=2 por ejemplo
+ * @param  {string}  sqlConditionOperator Cadena de texto con el operador del where Ejmplo: AND, OR 
  * @returns {string}
  * @description Creamos una condición con la siguiente formula de ejemplo
  *  object.key = object.value
@@ -55,7 +56,8 @@ const whereConstructor = (param, sqlConditionOperator) =>{
 
 /**
  * 
- * @param {string} key 
+ * @param {string} key Contiene la clae y las cadenas para obetener 
+ * el operador from  >= // until <=
  * @returns {[{key:string, operator:string}]} Objeto con la clave de búsqueda y el string
 *  @description recibe un estring con la clave y el operador de búsqueda ylos separa
 */
