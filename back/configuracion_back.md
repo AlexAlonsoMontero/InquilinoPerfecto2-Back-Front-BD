@@ -67,9 +67,15 @@ node server.js
     # infrestructure/respository/generalRepository.js
     * Esta carpeta contendrá metodos de respositorio genéricos, por ejemplo un select que nos devuelva todos los elementos y que sea válido para todas las tablas de la base de datos.
         * getAllItems() -> Devuelve todos los datos que existan en la tabla pasada como parametro table
+        * findItems() => Método que devuelve el resutlado de un select en cualquier tabla, con un where
+        * whereConstructor() => Método genérico para construir el string de un where
+        * getKeyOperator()=> Método que mapea los query param, para generar la cadena de condición de un Select
+
 
 # Carpeta controllers
 * Los controladore serán agrupados por ruta. Como ejemplo userControllers.js llevará los metodos correspondientes con el endpoint /api/users
 
     * getAllUsers() -> Conecta con respositorio getAllitems, y devuelve todos los usuarios de la tabla usuarios
+    * findUsers() ->  Conecta con findItems y busqueda un usuario según condiciones facilitadas en query param
+    
 
