@@ -1,4 +1,5 @@
-const { request } = require('express')
+const { request, response } = require('express')
+const bcrypt  = require('bcrypt')
 const {getAllItems, findItems, addItem} = require('../infraestructure/repository/generalRepository')
 const table = 'usuarios'
 /**
@@ -39,12 +40,22 @@ const findUsers = async (request,response)=>{
 
 const addUser = async(request,response)=>{
     try{
+        request.body.password= await bcrypt.hash(request.body.password,10)
         const result = await addItem(table, request.body)
         response.status(201).send("Usuario creado correctamente")
 
     }catch(error){
         console.warn(error.message)
         response.status(500).send("Internal server error")
+    }
+}
+
+const login = async(request, response)=>{
+    try{
+
+    }catch(error){
+        console.warn(error.message)
+        
     }
 }
 

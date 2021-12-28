@@ -61,6 +61,21 @@ node server.js
 ```
 * Conexión a base de datos en /infraestructure/db.js
 
+# Paquetes npm y su funcionalidad
+* bcrypt-> Paquete para encriptado de datos, se usará para el password de usuario
+```
+    npm i bcrypt
+```
+* Guardar contraseña encriptaa
+```
+    const palabraSecretaEncriptada = await bcrypt.hash(palabraSecretaTextoPlano, rondasDeSal);
+```
+* Comparar contraseña encriptada
+```
+    const palabraSecretaValida = await bcrypt.compare(palabraSecretaTextoPlano, palabraSecretaEncriptada);
+```
+
+
 # Carpeta infraestructure/repository
 * En esta caerpeta gestionaremos los respositorios las conexiones con las bases de datos.
 
@@ -77,5 +92,5 @@ node server.js
 
     * getAllUsers() -> Conecta con respositorio getAllitems, y devuelve todos los usuarios de la tabla usuarios
     * findUsers() ->  Conecta con findItems y busqueda un usuario según condiciones facilitadas en query param
-    
+
 
