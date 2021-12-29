@@ -85,12 +85,19 @@ node server.js
         * findItems() => Método que devuelve el resutlado de un select en cualquier tabla, con un where
         * whereConstructor() => Método genérico para construir el string de un where
         * getKeyOperator()=> Método que mapea los query param, para generar la cadena de condición de un Select
+        * addItem() => Método para añadir una entrada en la base de datos
 
 
 # Carpeta controllers
-* Los controladore serán agrupados por ruta. Como ejemplo userControllers.js llevará los metodos correspondientes con el endpoint /api/users
+* Los controladore serán agrupados por ruta. Como ejemplo userControllers.js llevará los metodos correspondientes con el endpoint /api/users.
 
-    * getAllUsers() -> Conecta con respositorio getAllitems, y devuelve todos los usuarios de la tabla usuarios
-    * findUsers() ->  Conecta con findItems y busqueda un usuario según condiciones facilitadas en query param
+    * getAllUsers() -> Conecta con respositorio getAllitems, y devuelve todos los usuarios de la tabla usuarios.
+    * findUsers() ->  Conecta con findItems y busqueda un usuario según condiciones facilitadas en query param.
+    * addUser() -> Método para añadir usuario en la base de datos
+    * login() -> Método para logar usuario
+
+# Carpeta customerrors
+* Capeta que contiene errores peronsalizdos para poder llevar una mejor gestión de errores 
+
 
 

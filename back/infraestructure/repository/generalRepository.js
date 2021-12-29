@@ -49,7 +49,6 @@ const whereConstructor = (param, sqlConditionOperator) =>{
         key = keyOperator.key
         operator = keyOperator.operator
         condition += (i===0?`${key} ${operator} ? `: ` ${sqlConditionOperator} ${key} ${operator} ? `)
-        console.log(condition)
     }
     return condition
 }
@@ -82,11 +81,15 @@ const getKeyOperator = (key) => {
     return keyOperator
 
 }
-
-const addItem = async (table,objectUser)=>{
-    const values = Object.values(objectUser).map(val=>(typeof(val)==='string'?val=`'${val}'`:val))
-    const sentence = `INSERT INTO ${table} (${Object.keys(objectUser)}) VALUES (${values})`
-    console.log(sentence)
+/**
+ * 
+ * @param {*} table 
+ * @param {*} object Objeto con los campos y os datos que se añadiran a la tabla
+ * @returns {[object]} Devuelve  un array con lso datos encontrados
+ */
+const addItem = async (table,object)=>{
+    const values = Object.values(object).map(val=>(typeof(val)==='string'?val=`'${val}'`:val))
+    const sentence = `INSERT INTO ${table} (${Object.keys(object)}) VALUES (${values})`
     const result = await conection.query(sentence)
     return result[0]
 }
