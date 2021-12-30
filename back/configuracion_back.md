@@ -65,16 +65,14 @@ node server.js
 * bcrypt-> Paquete para encriptado de datos, se usará para el password de usuario
 ```
     npm i bcrypt
+//Guardar contraseña encriptada
+const palabraSecretaEncriptada = await bcrypt.hash(palabraSecretaTextoPlano, rondasDeSal);
+//Comparar contraseña encriptada
 ```
-* Guardar contraseña encriptaa
+* jwt -> Json web token Geenera y lee tokens para autenticación de usuarios
 ```
-    const palabraSecretaEncriptada = await bcrypt.hash(palabraSecretaTextoPlano, rondasDeSal);
+    npm install jsonwebtoken
 ```
-* Comparar contraseña encriptada
-```
-    const palabraSecretaValida = await bcrypt.compare(palabraSecretaTextoPlano, palabraSecretaEncriptada);
-```
-
 
 # Carpeta infraestructure/repository
 * En esta caerpeta gestionaremos los respositorios las conexiones con las bases de datos.
@@ -94,10 +92,14 @@ node server.js
     * getAllUsers() -> Conecta con respositorio getAllitems, y devuelve todos los usuarios de la tabla usuarios.
     * findUsers() ->  Conecta con findItems y busqueda un usuario según condiciones facilitadas en query param.
     * addUser() -> Método para añadir usuario en la base de datos
-    * login() -> Método para logar usuario
+    * login() -> Método para logar usuario,usando token
 
 # Carpeta customerrors
 * Capeta que contiene errores peronsalizdos para poder llevar una mejor gestión de errores 
+
+    * dbErrors.js --> Errores customizados relacionados con la base de datos
+
+        * ErrorNotFoundDB()--> Error para cuando no se encuentran resultados en la base de datos
 
 
 

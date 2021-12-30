@@ -1,9 +1,10 @@
-const { request, response } = require('express')
-const bcrypt  = require('bcrypt')
-const {getAllItems, findItems, addItem} = require('../infraestructure/repository/generalRepository')
+const { getAllItems, findItems, addItem } = require('../infraestructure/repository/generalRepository')
 const { ErrorNotFoundDB } = require ('../customErrors/dbErrors')
-
+const bcrypt  = require('bcrypt')
+const jwt = require('jsonwebtoken')
+const res = require('express/lib/response')
 const table = 'usuarios'
+
 let finalResponse ={isStatus:"",sendMessage:""}
 
 
@@ -74,7 +75,12 @@ const login = async(request, response)=>{
         if(loginUser!=0){
             const resultlogin = await bcrypt.compare(request.body.password, loginUser[0].password)
             if (resultlogin){
-                finalResponse = {isStatus:200, sendMessage:"Usuario Logado"}
+                const token = generateToken(loginUser[0].id_usuario, loginUser[0].username,loginUser[0].email, loginUser[0].tipo)
+                response.header('authorization',token).json({
+                    message: 'Usuario autenticado',
+                    username: loginUser[0].username,
+                    token:token
+                })
             }else{
                 throw new ErrorNotFoundDB('password')
             }
@@ -83,14 +89,37 @@ const login = async(request, response)=>{
         }
         
     }catch(error){
-        console.warn(`${error.message}`)
-        finalResponse = {isStatus:error.code,sendMessage:error.userMessage}
+        console.warn(error.message)
+        if(error instanceof ErrorNotFoundDB){
+            response.status(error.code).send(error.userMessage)
+        }else{
+            response.status(500).send("Servicio no disponible")
+        }
+
     }
-    finally{
-        response.status(finalResponse.isStatus).send(finalResponse.sendMessage)
-    }
+   
 }
 
-
+/**
+ * 
+ * @param {strintg} id_usuario 
+ * @param {string} username 
+ * @param {string} tipo 
+ * @returns {string} Devuelve el token generado
+ */
+const generateToken = (id_usuario,username,email,tipo) =>{
+    const tokenPayLoad ={
+        id_usuario : id_usuario,
+        username : username,
+        email : email,
+        tipo : tipo
+    }
+    const token = jwt.sign(
+        tokenPayLoad,
+        process.env.TOKEN_SECRET,
+        { expiresIn : '30d' }
+    )
+    return token
+}
 
 module.exports =  { getAllUsers, findUsers, addUser, login}

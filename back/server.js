@@ -2,6 +2,7 @@ const express = require('express');
 const morgan = require ('morgan')
 
 const { getAllUsers, findUsers, addUser, login } = require('./controllers/usercotrolers')
+const { validateToken } = require('./middlewares/validateToken')
 
 const app = express();
 
@@ -10,6 +11,10 @@ require('dotenv').config();
 app.use(morgan('combined')); //formato: combined... ver doc https://www.npmjs.com/package/morgan
 app.use(express.json())
 
+
+//PRUEBAS
+const endpointPrueba  = '/prueba'
+app.post(endpointPrueba,validateToken,getAllUsers)
 
 //ENDPOINT USERS
 const endpointGetUsers = '/api/users'
