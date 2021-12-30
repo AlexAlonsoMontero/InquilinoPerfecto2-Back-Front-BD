@@ -18,11 +18,16 @@ let finalResponse ={isStatus:"",sendMessage:""}
 const getAllUsers = async (request,response) =>{
     try{
         const users = await getAllItems(table)
-        response.status(200).send({ 'info':'Todos los usuarios',data:users })
+        finalResponse.isStatus = 200
+        finalResponse.sendMessage = { 'info':'Todos los usuarios',data:users }
 
     }catch(error){
         console.warn(error.message)
-        response.status(500).send("Internal server error")
+        finalResponse.isStatus = 500
+        finalResponse.sendMessage = "Internal sercver error"
+    }
+    finally{
+        response.status(finalResponse.isStatus).send(finalResponse.sendMessage)
     }
 }
 
@@ -36,10 +41,15 @@ const getAllUsers = async (request,response) =>{
 const findUsers = async (request,response)=>{
     try{
         const users = await findItems(table,request.query)
-        response.status(200).send({'info': "Usuarios según condiciones de búsqueda", data:users})
+        finalResponse.isStatus = 200
+        finalResponse.sendMessage ={'info': "Usuarios según condiciones de búsqueda", data:users} 
+        
     }catch(error){
         console.warn(error.message)
-        response.status(500).send("Internal server error")
+        finalResponse.isStatus=500
+        finalResponse.sendMessage = "Internal server error"
+    }finally{
+        response.status(finalResponse.isStatus).send(finalResponse.sendMessage)
     }
     
 }
@@ -55,11 +65,15 @@ const addUser = async(request,response)=>{
     try{
         request.body.password= await bcrypt.hash(request.body.password,10)
         const result = await addItem(table, request.body)
-        response.status(201).send("Usuario creado correctamente")
+        finalResponse.isStatus = 201
+        finalResponse.sendMessage ="Usuario creado correctamente"
 
     }catch(error){
         console.warn(error.message)
-        response.status(500).send("Internal server error")
+        finalResponse.isStatus=500
+        finalResponse.sendMessage ="Internal server error"
+    }finally{
+        response.status(finalResponse.isStatus).send(finalResponse.sendMessage)
     }
 }
 /**
