@@ -1,4 +1,4 @@
-const { getAllItems, findItems, addItem } = require('../infraestructure/repository/generalRepository')
+const { getAllItems, findItems, addItem, delteItem } = require('../infraestructure/repository/generalRepository')
 const { ErrorNotFoundDB } = require ('../customErrors/dbErrors')
 const bcrypt  = require('bcrypt')
 const jwt = require('jsonwebtoken')
@@ -80,6 +80,43 @@ const addUser = async(request,response)=>{
  * 
  * @param {object} request 
  * @param {object} response 
+ * @returns {object} devuelve response.status().send()
+ * @description Llama a delte item para borrar un usuario
+ */
+const deleteUser = async(request,response) =>{
+    try{
+        const result = await delteItem('usuarios', request.body)
+        if (result){
+            finalResponse.isStatus = 200
+            finalResponse.sendMessage = "Usuario borrado correctamente de base de datos"
+        }else{
+            throw new ErrorNotFoundDB('usuario')
+        }
+    }catch(error){
+        console.log(error.message)
+        if(error instanceof ErrorNotFoundDB){
+            finalResponse.isStatus=error.code
+            finalResponse.sendMessage = error.userMessage
+        }else{
+            finalResponse.isStatus = 500
+            finalResponse.sendMessage ="Error en el borrado de usuario"
+        }
+    }finally{
+        response.status(finalResponse.isStatus).send(finalResponse.sendMessage)
+    }
+    
+    
+    
+    
+}
+
+
+
+
+/**
+ * 
+ * @param {object} request 
+ * @param {object} response 
  * @returns { object } response.status informando de estado de la operacion
  */
 const login = async(request, response)=>{
@@ -109,9 +146,8 @@ const login = async(request, response)=>{
         }else{
             response.status(500).send("Servicio no disponible")
         }
-
     }
-   
+
 }
 
 /**
@@ -136,4 +172,12 @@ const generateToken = (id_usuario,username,email,tipo) =>{
     return token
 }
 
-module.exports =  { getAllUsers, findUsers, addUser, login}
+
+
+module.exports =  { 
+    getAllUsers, 
+    findUsers,
+    addUser,
+    login,
+    deleteUser
+}
