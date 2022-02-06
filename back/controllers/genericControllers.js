@@ -10,46 +10,55 @@ let finalResponse ={isStatus:"",sendMessage:""}
 
 /**
  * 
- * @param {*} request 
- * @param {*} response 
- * @return {*} response.status
- * @description Conecta con respositorio getAllitems, y devuelve todos los usuarios de la tabla usuarios
+ * @param {string} table 
+ * @return {{info:string, data:object | string}} object
+ * @description Conecta con respositorio getAllitems, y devuelve todos los campos de una tabla
  */
-const getAllUsers = async (request,response) =>{
+const getAll = async (table) =>{
     try{
-        const users = await getAllItems(table)
-        finalResponse.isStatus = 200
-        finalResponse.sendMessage = { 'info':'Todos los usuarios',data:users }
+        const items = await getAllItems(table)
+        if(items.length===0){
+            throw new ErrorNotFoundDB(table)
+        }else{
+            finalResponse.isStatus = 200
+            finalResponse.sendMessage = items
+        }
+        
 
     }catch(error){
-        console.warn(error.message)
-        finalResponse.isStatus = 500
-        finalResponse.sendMessage = "Internal sercver error"
+        console.error(error.message)
+        finalResponse.isStatus= (error.code ? error.code: 500)
+        finalResponse.sendMessage = (error.message ? error.message: "Internal server error")
     }
     finally{
-        response.status(finalResponse.isStatus).send(finalResponse.sendMessage)
+        return finalResponse
     }
 }
 
 /**
  * 
- * @param {object} request 
- * @param {object} response 
- * @returns {[object]} response.status
- * @description Conecta con el respositorio genérico de base de datos y devuelve todos los elementos dela tabla usuarios que cumplan las condiciones
+ * @param {string} table 
+ * @param {{object}} params 
+ * @returns {[{info:string, data:object | string}]} object
+ * @description Conecta con el respositorio genérico de base de datos y devuelve todos los elementos dela tabla correspondiente con el parametro table que cumplan las condiciones
  */
-const findUsers = async (request,response)=>{
+const find = async (table,params)=>{
     try{
-        const users = await findItems(table,request.query)
-        finalResponse.isStatus = 200
-        finalResponse.sendMessage ={'info': "Usuarios según condiciones de búsqueda", data:users} 
+        const items = await findItems(table,params)
+        if(items.length===0){
+            throw new ErrorNotFoundDB(table)
+        }else{
+            finalResponse.isStatus = 200
+            finalResponse.sendMessage =items 
+        }
+        
         
     }catch(error){
-        console.warn(error.message)
-        finalResponse.isStatus=500
-        finalResponse.sendMessage = "Internal server error"
+        console.error(error.message)
+        finalResponse.isStatus= (error.code ? error.code: 500)
+        finalResponse.sendMessage = (error.message ? error.message: "Internal server error")
     }finally{
-        response.status(finalResponse.isStatus).send(finalResponse.sendMessage)
+        return finalResponse
     }
     
 }
@@ -61,7 +70,7 @@ const findUsers = async (request,response)=>{
  * @returns {object} devuelve response.status
  * @description Método para dar de alta usuario en base de datos
  */
-const addUser = async(request,response)=>{
+const add = async(request,response)=>{
     try{
         request.body.password= await bcrypt.hash(request.body.password,10)
         const result = await addItem(table, request.body)
@@ -83,7 +92,7 @@ const addUser = async(request,response)=>{
  * @returns {object} devuelve response.status().send()
  * @description Llama a delte item para borrar un usuario
  */
-const deleteUser = async(request,response) =>{
+const drop = async(request,response) =>{
     try{
         const result = await delteItem('usuarios', request.body)
         if (result){
@@ -175,9 +184,9 @@ const generateToken = (id_usuario,username,email,tipo) =>{
 
 
 module.exports =  { 
-    getAllUsers, 
-    findUsers,
-    addUser,
+    getAll, 
+    find,
+    add,
     login,
-    deleteUser
+    drop
 }

@@ -62,8 +62,8 @@ const getKeyOperator = (key) => {
 }
 /**
  * 
- * @param {*} table 
- * @param {*} object Objeto con los campos y os datos que se añadiran a la tabla
+ * @param {string} table 
+ * @param {{object}} object Objeto con los campos y os datos que se añadiran a la tabla
  * @returns {[object]} Devuelve  un array con lso datos encontrados
  */
 const addItem = async (table,object)=>{
