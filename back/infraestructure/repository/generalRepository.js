@@ -31,28 +31,6 @@ const findItems = async (table,param) =>{
     return question[0]
 }
 
-/**
- * 
- * @param {[object]} param Objeto con las claves y los valoes correspondeintes id=2 por ejemplo
- * @param  {string}  sqlConditionOperator Cadena de texto con el operador del where Ejmplo: AND, OR 
- * @returns {string}
- * @description Creamos una condición con la siguiente formula de ejemplo
- *  object.key = object.value
- */
-const whereConstructor = (param, sqlConditionOperator) =>{
-    let condition = ""
-    let key = ""
-    operator = "="
-
-    for (let i = 0; i < Object.keys(param).length; i++){
-        keyOperator = getKeyOperator(Object.keys(param)[i])
-        key = keyOperator.key
-        operator = keyOperator.operator
-        condition += (i===0?`${key} ${operator} ? `: ` ${sqlConditionOperator} ${key} ${operator} ? `)
-        console.log(condition)
-    }
-    return condition
-}
 
 /**
  * 
@@ -82,8 +60,66 @@ const getKeyOperator = (key) => {
     return keyOperator
 
 }
+/**
+ * 
+ * @param {*} table 
+ * @param {*} object Objeto con los campos y os datos que se añadiran a la tabla
+ * @returns {[object]} Devuelve  un array con lso datos encontrados
+ */
+const addItem = async (table,object)=>{
+    const values = Object.values(object).map(val=>(typeof(val)==='string'?val=`'${val}'`:val))
+    const sentence = `INSERT INTO ${table} (${Object.keys(object)}) VALUES (${values})`
+    const result = await conection.query(sentence)
+    return result[0]
+}
 
-module.exports = { getAllItems, findItems }
+/**
+ * 
+ * @param {string} table 
+ * @param {object} object 
+ * @returns True si el borrado es ok. False si no se puede borrar
+ * @description borra un registro de la base de datos
+ */
+const delteItem = async (table,object)=>{
+    console.log(Object.keys(object)[0])
+    const sentence =  `DELETE FROM ${table} WHERE ${Object.keys(object)[0]} = ?`
+    const result = await conection.query(sentence, Object.values(object)[0])
+    return (result[0].affectedRows>0? true : false)
+    
+}
+
+/**
+ * 
+ * @param {[object]} param Objeto con las claves y los valoes correspondeintes id=2 por ejemplo
+ * @param  {string}  sqlConditionOperator Cadena de texto con el operador del where Ejmplo: AND, OR 
+ * @returns {string}
+ * @description Creamos una condición con la siguiente formula de ejemplo
+ *  object.key = object.value
+ */
+ const whereConstructor = (param, sqlConditionOperator) =>{
+    let condition = ""
+    let key = ""
+    operator = "="
+
+    for (let i = 0; i < Object.keys(param).length; i++){
+        keyOperator = getKeyOperator(Object.keys(param)[i])
+        key = keyOperator.key
+        operator = keyOperator.operator
+        condition += (i===0?`${key} ${operator} ? `: ` ${sqlConditionOperator} ${key} ${operator} ? `)
+    }
+    return condition
+}
+
+
+
+
+module.exports = {
+    getAllItems, 
+    findItems,
+    addItem,
+    delteItem,
+
+}
 
 
 

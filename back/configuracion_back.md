@@ -61,15 +61,48 @@ node server.js
 ```
 * Conexión a base de datos en /infraestructure/db.js
 
+# Paquetes npm y su funcionalidad
+* bcrypt-> Paquete para encriptado de datos, se usará para el password de usuario
+```
+    npm i bcrypt
+//Guardar contraseña encriptada
+const palabraSecretaEncriptada = await bcrypt.hash(palabraSecretaTextoPlano, rondasDeSal);
+//Comparar contraseña encriptada
+```
+* jwt -> Json web token Geenera y lee tokens para autenticación de usuarios
+```
+    npm install jsonwebtoken
+```
+
 # Carpeta infraestructure/repository
 * En esta caerpeta gestionaremos los respositorios las conexiones con las bases de datos.
 
     # infrestructure/respository/generalRepository.js
     * Esta carpeta contendrá metodos de respositorio genéricos, por ejemplo un select que nos devuelva todos los elementos y que sea válido para todas las tablas de la base de datos.
-        * getAllItems() -> Devuelve todos los datos que existan en la tabla pasada como parametro table
+        * getAllItems() => Devuelve todos los datos que existan en la tabla pasada como parametro table
+        * findItems() => Método que devuelve el resutlado de un select en cualquier tabla, con un where
+        * whereConstructor() => Método genérico para construir el string de un where
+        * getKeyOperator()=> Método que mapea los query param, para generar la cadena de condición de un Select
+        * addItem() => Método para añadir una entrada en la base de datos
+        * delteItem( )=> Método para borrar un item de la base dedatos
+
 
 # Carpeta controllers
-* Los controladore serán agrupados por ruta. Como ejemplo userControllers.js llevará los metodos correspondientes con el endpoint /api/users
+* Los controladores serán agrupados por ruta. Como ejemplo userControllers.js llevará los metodos correspondientes con el endpoint /api/users.
 
-    * getAllUsers() -> Conecta con respositorio getAllitems, y devuelve todos los usuarios de la tabla usuarios
+* usercontrolers.js -> Fichero con controladores de usuario
+    * getAllUsers() -> Conecta con respositorio getAllitems, y devuelve todos los usuarios de la tabla usuarios.
+    * findUsers() ->  Conecta con findItems y busqueda un usuario según condiciones facilitadas en query param.
+    * addUser() -> Método para añadir usuario en la base de datos
+    * login() -> Método para logar usuario,usando token
+    * deleteUser()-> Método que llama a delte item y borra un usuario de la base de datos.
+
+# Carpeta customerrors
+* Capeta que contiene errores peronsalizdos para poder llevar una mejor gestión de errores 
+
+    * dbErrors.js --> Errores customizados relacionados con la base de datos
+
+        * ErrorNotFoundDB()--> Error para cuando no se encuentran resultados en la base de datos
+
+
 
