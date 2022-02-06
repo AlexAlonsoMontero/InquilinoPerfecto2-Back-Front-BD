@@ -5,7 +5,7 @@ Web de alquileres de inmuebles con la posibilidad de presentar reseñas tanto de
 La primera versión fue el proyecto del bootcamp Hack  a Boss, esta versión es una mejora realizada de forma personal
 ## Configuración git ignore
 
-* Creamos archivo .gitignore para evitar subir node_modules, y por seguridad el archivo .env
+* Creamos archivo .gitignore para evitar subir node_modules, y por seguridad el archivo .env 
 ```
     *node_modules/*
     .env
