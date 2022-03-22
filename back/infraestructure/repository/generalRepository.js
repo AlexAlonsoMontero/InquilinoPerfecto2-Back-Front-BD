@@ -32,34 +32,7 @@ const findItems = async (table,param) =>{
 }
 
 
-/**
- * 
- * @param {string} key Contiene la clae y las cadenas para obetener 
- * el operador from  >= // until <=
- * @returns {[{key:string, operator:string}]} Objeto con la clave de búsqueda y el string
-*  @description recibe un estring con la clave y el operador de búsqueda ylos separa
-*/
-const getKeyOperator = (key) => {
-    const separator ="$"
-    let keyOperator = {key:"",operator:"="}
-    if (key.split(separator).length>1){
-        switch (key.split(separator)[0]){
-            case 'from':
-                keyOperator.operator = '>='
-                break
-            case 'until':
-                keyOperator.operator = '<='
-                break
-            default:
-                keyOperator.operator = '='
-        }
-        keyOperator.key = key.split(separator)[1]
-    }else{
-        keyOperator.key = key.split(separator)[0]
-    }
-    return keyOperator
 
-}
 /**
  * 
  * @param {string} table 
@@ -81,7 +54,6 @@ const addItem = async (table,object)=>{
  * @description borra un registro de la base de datos
  */
 const delteItem = async (table,object)=>{
-    console.log(Object.keys(object)[0])
     const sentence =  `DELETE FROM ${table} WHERE ${Object.keys(object)[0]} = ?`
     const result = await conection.query(sentence, Object.values(object)[0])
     return (result[0].affectedRows>0? true : false)
@@ -110,7 +82,34 @@ const delteItem = async (table,object)=>{
     return condition
 }
 
+/**
+ * 
+ * @param {string} key Contiene la clae y las cadenas para obetener 
+ * el operador from  >= // until <=
+ * @returns {[{key:string, operator:string}]} Objeto con la clave de búsqueda y el string
+*  @description recibe un estring con la clave y el operador de búsqueda ylos separa
+*/
+const getKeyOperator = (key) => {
+    const separator ="$"
+    let keyOperator = {key:"",operator:"="}
+    if (key.split(separator).length>1){
+        switch (key.split(separator)[0]){
+            case 'from':
+                keyOperator.operator = '>='
+                break
+            case 'until':
+                keyOperator.operator = '<='
+                break
+            default:
+                keyOperator.operator = '='
+        }
+        keyOperator.key = key.split(separator)[1]
+    }else{
+        keyOperator.key = key.split(separator)[0]
+    }
+    return keyOperator
 
+}
 
 
 module.exports = {

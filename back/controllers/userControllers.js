@@ -21,8 +21,18 @@ const findUsers = async(request , response) =>{
         })
 }
 
+const addUser = async(request, response) => {
+    const finalResponse = await add(table,request.body)
+    response
+        .status(finalResponse.isStatus)
+        .send({
+            info: "Añadir usuario",
+            message: finalResponse.sendMessage
+        })
+}
 
 module.exports = {
     getAllUsers,
-    findUsers
+    findUsers,
+    addUser
 }

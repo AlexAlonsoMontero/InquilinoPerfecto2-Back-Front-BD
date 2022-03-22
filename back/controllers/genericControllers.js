@@ -70,10 +70,10 @@ const find = async (table,params)=>{
  * @returns {object} devuelve response.status
  * @description Método para dar de alta usuario en base de datos
  */
-const add = async(request,response)=>{
+const add = async(table,params)=>{
     try{
-        request.body.password= await bcrypt.hash(request.body.password,10)
-        const result = await addItem(table, request.body)
+        params.password= await bcrypt.hash(params.password,10)
+        const result = await addItem(table, params)
         finalResponse.isStatus = 201
         finalResponse.sendMessage ="Usuario creado correctamente"
 
@@ -82,7 +82,7 @@ const add = async(request,response)=>{
         finalResponse.isStatus=500
         finalResponse.sendMessage ="Internal server error"
     }finally{
-        response.status(finalResponse.isStatus).send(finalResponse.sendMessage)
+        return finalResponse
     }
 }
 /**
