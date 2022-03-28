@@ -1,7 +1,7 @@
 const express = require('express');
 const morgan = require ('morgan')
 
-const { getAllUsers, findUsers, addUser, login, deleteUser } = require('./controllers/usercotrolers')
+const { getAllUsers, findUsers, addUser,login, deleteUser } = require('./controllers/userControllers.js')
 const { validateToken } = require('./middlewares/validateToken')
 
 const app = express();
@@ -28,7 +28,7 @@ app.get(endpointGetUsers,getAllUsers)
 app.get(endpointFindUsers,findUsers)
 app.post(endpointAddUser, addUser)
 app.post(endpointLogin,login)
-app.post(endopintDelteUser, deleteUser)
+app.delete(endopintDelteUser, deleteUser)
 
 let port = process.env.WEB_PORT
 let host = process.env.WEB_HOST
