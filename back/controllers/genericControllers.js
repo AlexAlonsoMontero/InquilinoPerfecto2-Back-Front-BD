@@ -1,9 +1,6 @@
 const { getAllItems, findItems, addItem, delteItem } = require('../infraestructure/repository/generalRepository')
 const { ErrorNotFoundDB } = require ('../customErrors/dbErrors')
 const bcrypt  = require('bcrypt')
-const jwt = require('jsonwebtoken')
-const res = require('express/lib/response')
-const table = 'usuarios'
 
 let finalResponse ={isStatus:"",sendMessage:""}
 
@@ -72,7 +69,6 @@ const find = async (table,params)=>{
  */
 const add = async(table,params)=>{
     try{
-        params.password= await bcrypt.hash(params.password,10)
         const result = await addItem(table, params)
         finalResponse.isStatus = 201
         finalResponse.sendMessage ="Usuario creado correctamente"
@@ -87,19 +83,19 @@ const add = async(table,params)=>{
 }
 /**
  * 
- * @param {object} request 
- * @param {object} response 
+ * @param {stirg} table 
+ * @param {object} param 
  * @returns {object} devuelve response.status().send()
- * @description Llama a delte item para borrar un usuario
+ * @description Llama a delete item para borrar un usuario
  */
-const drop = async(request,response) =>{
+const drop = async(table,params) =>{
     try{
-        const result = await delteItem('usuarios', request.body)
+        const result = await delteItem(table, params)
         if (result){
             finalResponse.isStatus = 200
             finalResponse.sendMessage = "Usuario borrado correctamente de base de datos"
         }else{
-            throw new ErrorNotFoundDB('usuario')
+            throw new ErrorNotFoundDB( table )
         }
     }catch(error){
         console.log(error.message)
@@ -111,7 +107,7 @@ const drop = async(request,response) =>{
             finalResponse.sendMessage ="Error en el borrado de usuario"
         }
     }finally{
-        response.status(finalResponse.isStatus).send(finalResponse.sendMessage)
+        return finalResponse
     }
     
     
@@ -122,64 +118,6 @@ const drop = async(request,response) =>{
 
 
 
-/**
- * 
- * @param {object} request 
- * @param {object} response 
- * @returns { object } response.status informando de estado de la operacion
- */
-const login = async(request, response)=>{
-    try{
-        const user = (request.body.username?{'username':request.body.username}:{'email':request.body.email})
-        const loginUser  = await findItems(table, user)
-        if(loginUser!=0){
-            const resultlogin = await bcrypt.compare(request.body.password, loginUser[0].password)
-            if (resultlogin){
-                const token = generateToken(loginUser[0].id_usuario, loginUser[0].username,loginUser[0].email, loginUser[0].tipo)
-                response.header('authorization',token).json({
-                    message: 'Usuario autenticado',
-                    username: loginUser[0].username,
-                    token:token
-                })
-            }else{
-                throw new ErrorNotFoundDB('password')
-            }
-        }else{
-            throw new ErrorNotFoundDB('usuario')
-        }
-        
-    }catch(error){
-        console.warn(error.message)
-        if(error instanceof ErrorNotFoundDB){
-            response.status(error.code).send(error.userMessage)
-        }else{
-            response.status(500).send("Servicio no disponible")
-        }
-    }
-
-}
-
-/**
- * 
- * @param {strintg} id_usuario 
- * @param {string} username 
- * @param {string} tipo 
- * @returns {string} Devuelve el token generado
- */
-const generateToken = (id_usuario,username,email,tipo) =>{
-    const tokenPayLoad ={
-        id_usuario : id_usuario,
-        username : username,
-        email : email,
-        tipo : tipo
-    }
-    const token = jwt.sign(
-        tokenPayLoad,
-        process.env.TOKEN_SECRET,
-        { expiresIn : '30d' }
-    )
-    return token
-}
 
 
 
@@ -187,6 +125,5 @@ module.exports =  {
     getAll, 
     find,
     add,
-    login,
     drop
 }

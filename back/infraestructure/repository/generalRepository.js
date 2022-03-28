@@ -87,7 +87,7 @@ const delteItem = async (table,object)=>{
  * @param {string} key Contiene la clae y las cadenas para obetener 
  * el operador from  >= // until <=
  * @returns {[{key:string, operator:string}]} Objeto con la clave de búsqueda y el string
-*  @description recibe un estring con la clave y el operador de búsqueda ylos separa
+*  @description recibe un estring con la clave y el operador de búsqueda y los separa
 */
 const getKeyOperator = (key) => {
     const separator ="$"
