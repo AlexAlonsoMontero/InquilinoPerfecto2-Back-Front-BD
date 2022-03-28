@@ -17,18 +17,17 @@ const endpointPrueba  = '/prueba'
 app.post(endpointPrueba,validateToken,getAllUsers)
 
 //ENDPOINT USERS
-const endpointGetUsers = '/api/users'
+const endpointUsers = '/api/users'
 const endpointFindUsers = '/api/users/find'
-const endpointAddUser = '/api/users/'
 const endpointLogin = '/api/users/login'
-const endopintDelteUser = '/api/users/del'
+const edpointUserProfile = '/api/users/:username'
 
 //USER
-app.get(endpointGetUsers,getAllUsers)
+app.get(endpointUsers,getAllUsers)
 app.get(endpointFindUsers,findUsers)
-app.post(endpointAddUser, addUser)
+app.post(endpointUsers, addUser)
 app.post(endpointLogin,login)
-app.delete(endopintDelteUser, deleteUser)
+app.delete(edpointUserProfile, deleteUser)
 
 let port = process.env.WEB_PORT
 let host = process.env.WEB_HOST

@@ -45,7 +45,6 @@ const addUser = async(request, response) => {
     try{
         const user = (request.body.username?{'username':request.body.username}:{'email':request.body.email})
         let loginUser  = await findItems(table, user)
-        console.log(loginUser)
         if(loginUser!=0){
             const resultlogin = await bcrypt.compare(request.body.password, loginUser[0].password)
             if (resultlogin){

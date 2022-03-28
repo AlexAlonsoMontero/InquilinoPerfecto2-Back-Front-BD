@@ -98,7 +98,6 @@ const drop = async(table,params) =>{
             throw new ErrorNotFoundDB( table )
         }
     }catch(error){
-        console.log(error.message)
         if(error instanceof ErrorNotFoundDB){
             finalResponse.isStatus=error.code
             finalResponse.sendMessage = error.userMessage
