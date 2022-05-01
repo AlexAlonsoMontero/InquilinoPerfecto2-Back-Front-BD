@@ -1,32 +1,35 @@
-const { getConnection } = require('../db_connection')
+const { query } = require('express')
+const {
+    getConnection
+} = require('../db_connection')
 
 const conection = getConnection()
 
 /**
- * 
- * @param {string} table 
+ *
+ * @param {string} table
  * @returns {object}
- * @description Devuelve todos los datos que existan en la tabla pasada 
+ * @description Devuelve todos los datos que existan en la tabla pasada
  * como parametro table
  */
-const getAllItems = async (table) =>{
+const getAllItems = async (table) => {
     const question = await conection.query(`SELECT * FROM ${table}`)
     return question[0]
 
 }
 
 /**
- * 
- * @param {string} table 
- * @param {object} param Objetos de request.query donde quey es 
+ *
+ * @param {string} table
+ * @param {object} param Objetos de request.query donde quey es
  * la clave de búsqueda y los values el valor que buscamos
  * @returns {[object]} Devuelve un objeto con los valores localizdos dela base de datos
  * @description Construye con ayudas de otros métodos una consulta
  *  con condiciones que nos vale para cualquier tabla y cualquier condicion simple
  */
-const findItems = async (table,param) =>{
-    const sqlConditionOperator = 'AND'
-    const condition = `SELECT * FROM ${table} WHERE  ` + whereConstructor(param,sqlConditionOperator)
+const findItems = async (table, param) => {
+    
+    const condition = `SELECT * FROM ${table} WHERE  ` + whereConstructor(param)
     const question = await conection.query(condition, Object.values(param))
     return question[0]
 }
@@ -34,66 +37,97 @@ const findItems = async (table,param) =>{
 
 
 /**
- * 
- * @param {string} table 
+ *
+ * @param {string} table
  * @param {{object}} object Objeto con los campos y os datos que se añadiran a la tabla
  * @returns {[object]} Devuelve  un array con lso datos encontrados
  */
-const addItem = async (table,object)=>{
-    const values = Object.values(object).map(val=>(typeof(val)==='string'?val=`'${val}'`:val))
+const addItem = async (table, object) => {
+    const values = Object.values(object).map(val => (typeof (val) === 'string' ? val = `'${val}'` : val))
     const sentence = `INSERT INTO ${table} (${Object.keys(object)}) VALUES (${values})`
     const result = await conection.query(sentence)
     return result[0]
 }
 
-/**
- * 
- * @param {string} table 
- * @param {object} object 
- * @returns True si el borrado es ok. False si no se puede borrar
- * @description borra un registro de la base de datos
- */
-const delteItem = async (table,object)=>{
-    const sentence =  `DELETE FROM ${table} WHERE ${Object.keys(object)[0]} = ?`
-    const result = await conection.query(sentence, Object.values(object)[0])
-    return (result[0].affectedRows>0? true : false)
-    
-}
 
 /**
  * 
+ * @param {string} table 
+ * @param {object} conditionParams 
+ * @param {object} updateParams 
+ * @returns {object}
+ */
+const updateItem = async (table,conditionParams, updateParams) =>{
+
+    let sentence =  `UPDATE  ${table} SET `
+    const numParams = Object.keys(updateParams).length
+    for (let  i =0; i<numParams; i++){
+        sentence += `${Object.keys(updateParams)[i]} = ?`
+        sentence += i<numParams-1 ? ", ": " "
+    }
+    sentence += `WHERE ${whereConstructor(conditionParams)}`
+    const result = await conection.query(sentence,[...Object.values(updateParams), ...Object.values(conditionParams)])
+    return(result[0])
+
+}
+
+
+
+
+
+/**
+ *
+ * @param {string} table
+ * @param {object} object
+ * @returns True si el borrado es ok. False si no se puede borrar
+ * @description borra un registro de la base de datos
+ */
+const deleteItem = async (table, object) => {
+    const sentence = `DELETE FROM ${table} WHERE ${Object.keys(object)[0]} = ?`
+    console.log(parseInt(Object.values(object)[0]))
+
+    const result = await conection.query(sentence, Object.values(object))
+    console.log((result[0].affectedRows > 0 ? true : false))
+    return (result[0].affectedRows > 0 ? true : false)
+
+}
+
+/**
+ *
  * @param {[object]} param Objeto con las claves y los valoes correspondeintes id=2 por ejemplo
- * @param  {string}  sqlConditionOperator Cadena de texto con el operador del where Ejmplo: AND, OR 
+ * @param  {string}  sqlConditionOperator Cadena de texto con el operador del where Ejmplo: AND, OR (por defecto AND)
+ * @param {string} operator Por defecto =
  * @returns {string}
  * @description Creamos una condición con la siguiente formula de ejemplo
  *  object.key = object.value
  */
- const whereConstructor = (param, sqlConditionOperator) =>{
+const whereConstructor = (param, sqlConditionOperator = "AND",operator = "=") => {
     let condition = ""
     let key = ""
-    operator = "="
-
-    for (let i = 0; i < Object.keys(param).length; i++){
+    for (let i = 0; i < Object.keys(param).length; i++) {
         keyOperator = getKeyOperator(Object.keys(param)[i])
         key = keyOperator.key
         operator = keyOperator.operator
-        condition += (i===0?`${key} ${operator} ? `: ` ${sqlConditionOperator} ${key} ${operator} ? `)
+        condition += (i === 0 ? `${key} ${operator} ? ` : ` ${sqlConditionOperator} ${key} ${operator} ? `)
     }
     return condition
 }
 
 /**
- * 
+ *
  * @param {string} key Contiene la clae y las cadenas para obetener 
  * el operador from  >= // until <=
  * @returns {[{key:string, operator:string}]} Objeto con la clave de búsqueda y el string
-*  @description recibe un estring con la clave y el operador de búsqueda y los separa
-*/
+ *  @description recibe un estring con la clave y el operador de búsqueda y los separa
+ */
 const getKeyOperator = (key) => {
-    const separator ="$"
-    let keyOperator = {key:"",operator:"="}
-    if (key.split(separator).length>1){
-        switch (key.split(separator)[0]){
+    const separator = "$"
+    let keyOperator = {
+        key: "",
+        operator: "="
+    }
+    if (key.split(separator).length > 1) {
+        switch (key.split(separator)[0]) {
             case 'from':
                 keyOperator.operator = '>='
                 break
@@ -104,21 +138,17 @@ const getKeyOperator = (key) => {
                 keyOperator.operator = '='
         }
         keyOperator.key = key.split(separator)[1]
-    }else{
+    } else {
         keyOperator.key = key.split(separator)[0]
     }
     return keyOperator
 
 }
 
-
 module.exports = {
-    getAllItems, 
+    getAllItems,
     findItems,
     addItem,
-    delteItem,
-
+    deleteItem,
+    updateItem,
 }
-
-
-

@@ -8,6 +8,16 @@ class ErrorNotFoundDB extends Error {
     }
 }
 
+class ErrorNoParams extends Error {
+    constructor(paramExpected){
+        super()
+        this.code = 404
+        this.message =`Se esperaba un parametro ${paramExpected}`
+
+    }
+}
+
 module.exports = {
-    ErrorNotFoundDB
+    ErrorNotFoundDB,
+    ErrorNoParams
 }
