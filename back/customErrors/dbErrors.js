@@ -16,8 +16,26 @@ class ErrorNoParams extends Error {
 
     }
 }
+class ErrorDuplicateEntry extends Error {
+    constructor(paramExpected){
+        super()
+        this.code = 501
+        this.message =`Entrada ${paramExpected.split("'")[1]} ya registrado.`;
+
+    }
+}
+
+class ErrorGeneryc  extends Error {
+    constructor(code, message){
+        super()
+        this.code = code;
+        this.message = message
+    }
+}
 
 module.exports = {
     ErrorNotFoundDB,
-    ErrorNoParams
+    ErrorNoParams,
+    ErrorDuplicateEntry,
+    ErrorGeneryc
 }

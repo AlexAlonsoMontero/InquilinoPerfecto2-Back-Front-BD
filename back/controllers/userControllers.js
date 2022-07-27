@@ -4,7 +4,10 @@ const { findItems } = require('../infraestructure/repository/generalRepository')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 const { response } = require('express')
+
 let finalResponse = {isStatus:"",sendMessage:""}
+// const finalResponse = require('../helpers/finalResponse')
+
 const table = "usuarios"
 
 const getAllUsers = async(request,response) =>{
@@ -87,7 +90,10 @@ const deleteUser = async(request, response) => {
 
 
 const updateUser = async(request, response)=>{
-    finalResponse = await update(table,request.params, request.body)
+    finalResponse = await update(table,request.params, request.body);
+    response
+        .status(200)
+        .send(finalResponse.sendMessage)
 }
 
 

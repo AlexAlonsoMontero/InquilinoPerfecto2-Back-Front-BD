@@ -7,13 +7,14 @@ const {
     updateItem
 } = require('../infraestructure/repository/generalRepository')
 const {
-    ErrorNotFoundDB
+    ErrorNotFoundDB, ErrorDuplicateEntry, ErrorGeneryc
 } = require('../customErrors/dbErrors')
 const bcrypt = require('bcrypt')
 const finalResponse = require('../helpers/finalResponse')
 const {
     param
 } = require('express/lib/request')
+const { response } = require('express')
 
 
 
@@ -112,6 +113,7 @@ const drop = async (table, params) => {
         if (error instanceof ErrorNotFoundDB) {
             finalResponse.isStatus = error.code
             finalResponse.sendMessage = error.userMessage
+            return finalResponse
         } else {
             finalResponse.isStatus = 500
             finalResponse.sendMessage = "Error en el borrado de usuario"
@@ -124,11 +126,21 @@ const drop = async (table, params) => {
 
 const update = async (table, id_item, params) => {
     try {
-        console.log("entra en genericControllers")
-        const result = await updateItem(table,id_item, params)
-
+        const result = await updateItem(table, id_item, params);
+        if (result) {
+            finalResponse.isStatus = 200
+            finalResponse.sendMessage = 'Usuario modificado correctamente'
+            return finalResponse
+        }
     } catch (error) {
-
+        if (error.code === 'ER_DUP_ENTRY') {
+            error = new ErrorDuplicateEntry(error.sqlMessage)
+        }else{
+            error  = new ErrorGeneryc(500, 'No se ha podido registrar la modificación')
+        }
+        finalResponse.isStatus = error.code
+        finalResponse.sendMessage = error.message
+        return finalResponse
     }
 }
 
