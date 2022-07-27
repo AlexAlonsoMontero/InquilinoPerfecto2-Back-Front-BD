@@ -1,13 +1,17 @@
-const { getAll, find, add, drop } = require('./genericControllers')
-const { ErrorNotFoundDB } = require ('../customErrors/dbErrors')
+const { getAll, find, add, drop, update } = require('./genericControllers')
+const { ErrorNotFoundDB, ErrorNoParams } = require ('../customErrors/dbErrors')
 const { findItems } = require('../infraestructure/repository/generalRepository')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
-const { status } = require('express/lib/response')
+const { response } = require('express')
+
+let finalResponse = {isStatus:"",sendMessage:""}
+// const finalResponse = require('../helpers/finalResponse')
+
 const table = "usuarios"
 
 const getAllUsers = async(request,response) =>{
-    const finalResponse = await getAll(table)
+    finalResponse = await getAll(table)
     response.status(finalResponse.isStatus).send({
         info: "Búsqueda de todos los usuarios",
         data: finalResponse.sendMessage
@@ -15,7 +19,7 @@ const getAllUsers = async(request,response) =>{
 }
 
 const findUsers = async(request , response) =>{
-    const finalResponse = await find(table,request.query)
+    finalResponse = await find(table,request.query)
     response
         .status(finalResponse.isStatus)
         .send({
@@ -26,7 +30,7 @@ const findUsers = async(request , response) =>{
 
 const addUser = async(request, response) => {
     request.body.password = await bcrypt.hash(request.body.password,10)
-    const finalResponse = await add(table,request.body)
+    finalResponse = await add(table,request.body)
     response
         .status(finalResponse.isStatus)
         .send({
@@ -45,7 +49,6 @@ const addUser = async(request, response) => {
     try{
         const user = (request.body.username?{'username':request.body.username}:{'email':request.body.email})
         let loginUser  = await findItems(table, user)
-        console.log(loginUser)
         if(loginUser!=0){
             const resultlogin = await bcrypt.compare(request.body.password, loginUser[0].password)
             if (resultlogin){
@@ -72,11 +75,24 @@ const addUser = async(request, response) => {
     }
 
 }
-
+/**
+ *
+ * @param {*} request
+ * @param {*} response
+ * @description Borrado de usuario
+ */
 const deleteUser = async(request, response) => {
-    const finalResponse = await drop(table, request.body)
+    finalResponse = await drop(table, request.params)
     response
         .status(finalResponse.isStatus)
+        .send(finalResponse.sendMessage)
+}
+
+
+const updateUser = async(request, response)=>{
+    finalResponse = await update(table,request.params, request.body);
+    response
+        .status(200)
         .send(finalResponse.sendMessage)
 }
 
@@ -103,10 +119,13 @@ const generateToken = (id_usuario,username,email,tipo) =>{
     return token
 }
 
+
+
 module.exports = {
     getAllUsers,
     findUsers,
     addUser,
     login,
-    deleteUser
+    deleteUser,
+    updateUser
 }

@@ -1,7 +1,7 @@
 const express = require('express');
 const morgan = require ('morgan')
 
-const { getAllUsers, findUsers, addUser,login, deleteUser } = require('./controllers/userControllers.js')
+const { getAllUsers, findUsers, addUser,login, deleteUser, updateUser } = require('./controllers/userControllers.js')
 const { validateToken } = require('./middlewares/validateToken')
 
 const app = express();
@@ -17,21 +17,21 @@ const endpointPrueba  = '/prueba'
 app.post(endpointPrueba,validateToken,getAllUsers)
 
 //ENDPOINT USERS
-const endpointGetUsers = '/api/users'
+const endpointUsers = '/api/users'
 const endpointFindUsers = '/api/users/find'
-const endpointAddUser = '/api/users/'
 const endpointLogin = '/api/users/login'
-const endopintDelteUser = '/api/users/del'
+const endpointUserProfile = '/api/users/:id_usuario'
 
 //USER
-app.get(endpointGetUsers,getAllUsers)
+app.get(endpointUsers,getAllUsers)
 app.get(endpointFindUsers,findUsers)
-app.post(endpointAddUser, addUser)
+app.post(endpointUsers, addUser)
 app.post(endpointLogin,login)
-app.delete(endopintDelteUser, deleteUser)
+app.delete(endpointUserProfile, deleteUser)
+app.put(endpointUserProfile, updateUser)
 
 let port = process.env.WEB_PORT
 let host = process.env.WEB_HOST
 app.listen(port,host,()=>{
     console.log(`Server runing at http://${host}:${port}`)
-}); 
+});
