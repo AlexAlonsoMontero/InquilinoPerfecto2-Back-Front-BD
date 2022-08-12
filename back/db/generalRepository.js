@@ -12,24 +12,37 @@ const connection = getConnection()
  * como parametro table
  */
 const getAllItems = async (table) => {
-    try{
+    try {
         const question = await connection.query(`SELECT * FROM ${table}`)
         return question[0]
-    }catch(error){
-        throw {status: 500, message: error};
+    } catch (error) {
+        throw { status: 500, message: error };
     }
-    
+
 
 }
 
-const getOneItem = async (table, param) =>{
-    try{
+const getOneItem = async (table, param) => {
+    try {
         const condition = `SELECT * FROM ${table} WHERE ${Object.keys(param)[0]} = ? `;
         const result = await connection.query(condition, Object.values(param)[0])
+        console.log('====================================');
+        console.log(result[0][0]);
+        console.log('====================================');
+        if (!result[0][0]) {
+            throw {
+                status: 400,
+                data: `No se ha localizado ningún dato en ${table}`
+            }
+        }
         return result[0][0]
 
-    }catch(error){
 
+    } catch (error) {
+        throw {
+            status: error?.status || 500,
+            data: error?.data || error
+        }
     }
 }
 
@@ -43,7 +56,7 @@ const getOneItem = async (table, param) =>{
  *  con condiciones que nos vale para cualquier tabla y cualquier condicion simple
  */
 const findItems = async (table, params) => {
-    
+
     const condition = `SELECT * FROM ${table} WHERE  ` + whereConstructor(params)
     const question = await connection.query(condition, Object.values(params))
     return question[0]
@@ -58,10 +71,18 @@ const findItems = async (table, params) => {
  * @returns {[object]} Devuelve  un array con lso datos encontrados
  */
 const addItem = async (table, object) => {
-    const values = Object.values(object).map(val => (typeof (val) === 'string' ? val = `'${val}'` : val))
-    const sentence = `INSERT INTO ${table} (${Object.keys(object)}) VALUES (${values})`
-    const result = await connection.query(sentence)
-    return result[0]
+    try {
+        const values = Object.values(object).map(val => (typeof (val) === 'string' ? val = `'${val}'` : val))
+        const sentence = `INSERT INTO ${table} (${Object.keys(object)}) VALUES (${values})`
+        await connection.query(sentence)
+    } catch (error) {
+        
+        throw {
+            status: 500,
+            message: error?.message || error
+        }
+    }
+
 }
 
 
@@ -72,16 +93,16 @@ const addItem = async (table, object) => {
  * @param {object} updateParams 
  * @returns {object}
  */
-const updateItem = async (table,conditionParams, updateParams) =>{
-    let sentence =  `UPDATE  ${table} SET `
+const updateItem = async (table, conditionParams, updateParams) => {
+    let sentence = `UPDATE  ${table} SET `
     const numParams = Object.keys(updateParams).length
-    for (let  i =0; i<numParams; i++){
+    for (let i = 0; i < numParams; i++) {
         sentence += `${Object.keys(updateParams)[i]} = ?`
-        sentence += i<numParams-1 ? ", ": " "
+        sentence += i < numParams - 1 ? ", " : " "
     }
     sentence += `WHERE ${whereConstructor(conditionParams)}`;
-    const result = await connection.query(sentence,[...Object.values(updateParams), ...Object.values(conditionParams)])
-    return(result[0])
+    const result = await connection.query(sentence, [...Object.values(updateParams), ...Object.values(conditionParams)])
+    return (result[0])
 
 }
 
@@ -115,7 +136,7 @@ const deleteItem = async (table, object) => {
  * @description Creamos una condición con la siguiente formula de ejemplo
  *  object.key = object.value
  */
-const whereConstructor = (param, sqlConditionOperator = "AND",operator = "=") => {
+const whereConstructor = (param, sqlConditionOperator = "AND", operator = "=") => {
     let condition = ""
     let key = ""
     for (let i = 0; i < Object.keys(param).length; i++) {

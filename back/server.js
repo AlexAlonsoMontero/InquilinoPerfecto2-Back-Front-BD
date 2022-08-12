@@ -1,6 +1,9 @@
+
+const userRouterV1 = require('./v1/routes/userRoutes');
+
 const express = require('express');
 const morgan = require ('morgan');
-const userRouterV1 = require('./v1/routes/userRoutes');
+
 
 const { validateToken } = require('./middlewares/validateToken')
 
@@ -21,16 +24,8 @@ app.use('/api/v1/users', userRouterV1);
 
 
 
-//ENDPOINT USERS
-const endpointUsers = '/api/users'
-const endpointgetOneUser = '/api/users/find'
-const endpointLogin = '/api/users/login'
-const endpointUserProfile = '/api/users/:id_usuario'
-
-
-
-let port = process.env.WEB_PORT
-let host = process.env.WEB_HOST
+const port = process.env.WEB_PORT
+const host = process.env.WEB_HOST
 app.listen(port,host,()=>{
     console.log(`Server runing at http://${host}:${port}`)
 });
