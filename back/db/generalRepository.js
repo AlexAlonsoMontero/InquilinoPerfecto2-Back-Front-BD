@@ -1,9 +1,8 @@
-const { query } = require('express')
 const {
     getConnection
-} = require('../db_connection')
+} = require('./db_connection')
 
-const conection = getConnection()
+const connection = getConnection()
 
 /**
  *
@@ -13,9 +12,25 @@ const conection = getConnection()
  * como parametro table
  */
 const getAllItems = async (table) => {
-    const question = await conection.query(`SELECT * FROM ${table}`)
-    return question[0]
+    try{
+        const question = await connection.query(`SELECT * FROM ${table}`)
+        return question[0]
+    }catch(error){
+        throw {status: 500, message: error};
+    }
+    
 
+}
+
+const getOneItem = async (table, param) =>{
+    try{
+        const condition = `SELECT * FROM ${table} WHERE ${Object.keys(param)[0]} = ? `;
+        const result = await connection.query(condition, Object.values(param)[0])
+        return result[0][0]
+
+    }catch(error){
+
+    }
 }
 
 /**
@@ -27,10 +42,10 @@ const getAllItems = async (table) => {
  * @description Construye con ayudas de otros métodos una consulta
  *  con condiciones que nos vale para cualquier tabla y cualquier condicion simple
  */
-const findItems = async (table, param) => {
+const findItems = async (table, params) => {
     
-    const condition = `SELECT * FROM ${table} WHERE  ` + whereConstructor(param)
-    const question = await conection.query(condition, Object.values(param))
+    const condition = `SELECT * FROM ${table} WHERE  ` + whereConstructor(params)
+    const question = await connection.query(condition, Object.values(params))
     return question[0]
 }
 
@@ -45,7 +60,7 @@ const findItems = async (table, param) => {
 const addItem = async (table, object) => {
     const values = Object.values(object).map(val => (typeof (val) === 'string' ? val = `'${val}'` : val))
     const sentence = `INSERT INTO ${table} (${Object.keys(object)}) VALUES (${values})`
-    const result = await conection.query(sentence)
+    const result = await connection.query(sentence)
     return result[0]
 }
 
@@ -65,7 +80,7 @@ const updateItem = async (table,conditionParams, updateParams) =>{
         sentence += i<numParams-1 ? ", ": " "
     }
     sentence += `WHERE ${whereConstructor(conditionParams)}`;
-    const result = await conection.query(sentence,[...Object.values(updateParams), ...Object.values(conditionParams)])
+    const result = await connection.query(sentence,[...Object.values(updateParams), ...Object.values(conditionParams)])
     return(result[0])
 
 }
@@ -79,10 +94,13 @@ const updateItem = async (table,conditionParams, updateParams) =>{
  * @description borra un registro de la base de datos
  */
 const deleteItem = async (table, object) => {
+    console.log('====================================');
+    console.log(object);
+    console.log('====================================');
     const sentence = `DELETE FROM ${table} WHERE ${Object.keys(object)[0]} = ?`
     console.log(parseInt(Object.values(object)[0]))
 
-    const result = await conection.query(sentence, Object.values(object))
+    const result = await connection.query(sentence, Object.values(object))
     console.log((result[0].affectedRows > 0 ? true : false))
     return (result[0].affectedRows > 0 ? true : false)
 
@@ -143,6 +161,7 @@ const getKeyOperator = (key) => {
 
 module.exports = {
     getAllItems,
+    getOneItem,
     findItems,
     addItem,
     deleteItem,

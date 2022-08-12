@@ -1,34 +1,33 @@
 const express = require('express');
-const morgan = require ('morgan')
+const morgan = require ('morgan');
+const userRouterV1 = require('./v1/routes/userRoutes');
 
-const { getAllUsers, findUsers, addUser,login, deleteUser, updateUser } = require('./controllers/userControllers.js')
 const { validateToken } = require('./middlewares/validateToken')
 
 const app = express();
 
 require('dotenv').config();
 
+app.use(express.json());
 app.use(morgan('combined')); //formato: combined... ver doc https://www.npmjs.com/package/morgan
-app.use(express.json())
+
+//Routes
+app.use('/api/v1/users', userRouterV1);
 
 
 //PRUEBAS
-const endpointPrueba  = '/prueba'
-app.post(endpointPrueba,validateToken,getAllUsers)
+// const endpointPrueba  = '/prueba'
+// app.post(endpointPrueba,validateToken,getAllUsers)
+
+
 
 //ENDPOINT USERS
 const endpointUsers = '/api/users'
-const endpointFindUsers = '/api/users/find'
+const endpointgetOneUser = '/api/users/find'
 const endpointLogin = '/api/users/login'
 const endpointUserProfile = '/api/users/:id_usuario'
 
-//USER
-app.get(endpointUsers,getAllUsers)
-app.get(endpointFindUsers,findUsers)
-app.post(endpointUsers, addUser)
-app.post(endpointLogin,login)
-app.delete(endpointUserProfile, deleteUser)
-app.put(endpointUserProfile, updateUser)
+
 
 let port = process.env.WEB_PORT
 let host = process.env.WEB_HOST

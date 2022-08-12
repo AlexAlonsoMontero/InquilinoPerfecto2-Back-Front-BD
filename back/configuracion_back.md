@@ -92,7 +92,7 @@ const palabraSecretaEncriptada = await bcrypt.hash(palabraSecretaTextoPlano, ron
 
 * usercontrolers.js -> Fichero con controladores de usuario
     * getAllUsers() -> Conecta con respositorio getAllitems, y devuelve todos los usuarios de la tabla usuarios.
-    * findUsers() ->  Conecta con findItems y busqueda un usuario según condiciones facilitadas en query param.
+    * getOneUser() ->  Conecta con findItems y busqueda un usuario según condiciones facilitadas en query param.
     * addUser() -> Método para añadir usuario en la base de datos
     * login() -> Método para logar usuario,usando token
     * deleteUser()-> Método que llama a delte item y borra un usuario de la base de datos.
