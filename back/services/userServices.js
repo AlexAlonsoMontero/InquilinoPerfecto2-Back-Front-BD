@@ -1,6 +1,7 @@
 const dbRepository = require('../db/generalRepository');
-const bcrypt = require('bcrypt');
+const { generateToken } = require('../helpers/generateToken');
 
+const bcrypt = require('bcrypt');
 
 const getAllUsers = async () => {
     try {
@@ -40,7 +41,7 @@ const createNewUser = async (newUserData) => {
         await dbRepository.addItem('usuarios', newUser);
         return newUser;
     } catch (error) {
-        
+
         throw {
             status: error.status,
             message: error?.message || error
@@ -49,8 +50,37 @@ const createNewUser = async (newUserData) => {
 
 
 }
+
+const login = async (user) => {
+    try {
+        const dbUser = await dbRepository.getOneItem('usuarios', user);
+        const result = await bcrypt.compare(user.password, dbUser.password)
+        if (!result) {
+            throw {
+                status: 401,
+                message: 'El password no coincide'
+            }
+        }
+        const token = generateToken(dbUser)
+        return {
+            token,
+            user:dbUser
+        }
+
+
+    } catch (error) {
+
+        throw {
+            status: error.status,
+            message: error?.message || error
+        }
+    }
+
+}
+
 module.exports = {
     getAllUsers,
     getOneUser,
-    createNewUser
+    createNewUser,
+    login
 }

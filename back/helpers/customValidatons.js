@@ -1,4 +1,6 @@
 const validateUserTipo = (value) => {
+    console.log("entra");
+    console.log(value);
     return (value === 'INQUILINO' ||
         value === 'CASERO' ||
         value === 'INQUILINO/CASERO' ||
@@ -8,6 +10,14 @@ const validateUserTipo = (value) => {
     
 }
 
+const validarUsernameOrMail = (value) =>{
+    console.log('====================================');
+    console.log('elvalor');
+    console.log(value);
+    console.log('====================================');
+    return false
+}
 module.exports = {
-    validateUserTipo
+    validateUserTipo,
+    validarUsernameOrMail
 }

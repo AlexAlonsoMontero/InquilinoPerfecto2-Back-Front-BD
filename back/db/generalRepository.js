@@ -22,13 +22,18 @@ const getAllItems = async (table) => {
 
 }
 
+/**
+ *
+ * @param {string} table
+ * @param {object} param
+ * @returns {object}
+ * @description Devuelve todos los datos que existan en la tabla pasada
+ * como parametro table, y que concuerden con el objeto paado enel parametro param
+ */
 const getOneItem = async (table, param) => {
     try {
         const condition = `SELECT * FROM ${table} WHERE ${Object.keys(param)[0]} = ? `;
-        const result = await connection.query(condition, Object.values(param)[0])
-        console.log('====================================');
-        console.log(result[0][0]);
-        console.log('====================================');
+        const result = await connection.query(condition, Object.values(param)[0]);
         if (!result[0][0]) {
             throw {
                 status: 400,
@@ -115,9 +120,7 @@ const updateItem = async (table, conditionParams, updateParams) => {
  * @description borra un registro de la base de datos
  */
 const deleteItem = async (table, object) => {
-    console.log('====================================');
-    console.log(object);
-    console.log('====================================');
+    
     const sentence = `DELETE FROM ${table} WHERE ${Object.keys(object)[0]} = ?`
     console.log(parseInt(Object.values(object)[0]))
 

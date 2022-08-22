@@ -4,6 +4,12 @@ const userService = require('../services/userServices');
 const jwt = require('jsonwebtoken')
 const table = "usuarios"
 
+// /**
+//  * 
+//  * @param {object} request 
+//  * @param {object} response 
+//  * @returns { object } response.status informando de estado de la operacion
+//  */
 const getAllUsers = async (request, response) => {
     try {
         const users = await userService.getAllUsers();
@@ -24,6 +30,12 @@ const getAllUsers = async (request, response) => {
 
 }
 
+// /**
+//  * 
+//  * @param {object} request 
+//  * @param {object} response 
+//  * @returns { object } response.status informando de estado de la operacion
+//  */
 const getOneUser = async (request, response) => {
     try {
         const user = await userService.getOneUser(request.params);
@@ -40,6 +52,12 @@ const getOneUser = async (request, response) => {
     }
 }
 
+// /**
+//  * 
+//  * @param {object} request 
+//  * @param {object} response 
+//  * @returns { object } response.status informando de estado de la operacion
+//  */
 const createNewUser = async (request, response) => {
     try {
         const newUser = await userService.createNewUser(request.body);
@@ -59,15 +77,6 @@ const createNewUser = async (request, response) => {
             })
     }
 
-
-    //     request.body.password = await bcrypt.hash(request.body.password,10)
-    //     finalResponse = await add(table,request.body)
-    //     response
-    //         .status(finalResponse.isStatus)
-    //         .send({
-    //             info: "Añadir usuario",
-    //             message: finalResponse.sendMessage
-    //         })
 }
 
 // /**
@@ -77,13 +86,34 @@ const createNewUser = async (request, response) => {
 //  * @returns { object } response.status informando de estado de la operacion
 //  */
 const login = async (request, response) => {
-    //     try{
-    //         const user = (request.body.username?{'username':request.body.username}:{'email':request.body.email})
+
+    try {
+        const user = (request.body.username ? { 'username': request.body.username } : { 'email': request.body.email });
+        user.password = request.body.password;
+        
+        const {token, user: loggedUser} = await userService.login(user);
+        response.header('auth-token',token).json({
+            data:{
+                username:loggedUser.username,
+                id_usuario: loggedUser.id_usuario,
+                token
+            }
+        })
+    } catch (error) {
+        response
+            .status(error?.status)
+            .send({
+                status: "FAILED",
+                data: { error: error?.message || error },
+                code: error?.status || 500
+            })
+    }
+
     //         let loginUser  = await findItems(table, user)
     //         if(loginUser!=0){
     //             const resultlogin = await bcrypt.compare(request.body.password, loginUser[0].password)
     //             if (resultlogin){
-    //                 const token = generateToken(loginUser[0].id_usuario, loginUser[0].username,loginUser[0].email, loginUser[0].tipo)
+                    // const token = generateToken(loginUser[0].id_usuario, loginUser[0].username,loginUser[0].email, loginUser[0].tipo)
     //                 response.header('authorization',token).json({
     //                     message: 'Usuario autenticado',
     //                     username: loginUser[0].username,
