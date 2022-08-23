@@ -81,7 +81,7 @@ const addItem = async (table, object) => {
         const sentence = `INSERT INTO ${table} (${Object.keys(object)}) VALUES (${values})`
         await connection.query(sentence)
     } catch (error) {
-        
+
         throw {
             status: 500,
             message: error?.message || error
@@ -116,17 +116,28 @@ const updateItem = async (table, conditionParams, updateParams) => {
  *
  * @param {string} table
  * @param {object} object
- * @returns True si el borrado es ok. False si no se puede borrar
  * @description borra un registro de la base de datos
  */
 const deleteItem = async (table, object) => {
-    
-    const sentence = `DELETE FROM ${table} WHERE ${Object.keys(object)[0]} = ?`
-    console.log(parseInt(Object.values(object)[0]))
+    try {
+        const sentence = `DELETE FROM ${table} WHERE ${Object.keys(object)[0]} = ?`
+        const result = await connection.query(sentence, Object.values(object))
+        if(result[0].affectedRows ===0){
+            throw {
+                status: 400,
+                data: `No se ha podido borrar en ${table}, no se ha localizado el usuario`
+            }
+        };
+    } catch (error) {
+        
+        throw {
+            status: 500,
+            message: error?.data || error.message || 'Error en la conexion con la base de datos'
+        }
+    }
 
-    const result = await connection.query(sentence, Object.values(object))
-    console.log((result[0].affectedRows > 0 ? true : false))
-    return (result[0].affectedRows > 0 ? true : false)
+
+
 
 }
 

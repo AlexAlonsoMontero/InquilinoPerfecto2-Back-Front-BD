@@ -20,8 +20,6 @@ const getOneUser = async (searchParams) => {
 
         return result
     } catch (error) {
-        // console.log(error.status);
-        // throw { status: error?.status || 500, messa, message: error?.message || error}
         console.log(error);
         throw {
             status: error.status,
@@ -78,9 +76,26 @@ const login = async (user) => {
 
 }
 
+const deleteUser = async (id_usuario) => {
+    try {
+        await dbRepository.deleteItem('usuarios', id_usuario)
+
+    } catch (error) {
+        throw {
+            status: error.status,
+            message: error?.data || error
+        }
+    }
+}
+
+const updateUser = () =>{
+
+}
 module.exports = {
     getAllUsers,
     getOneUser,
     createNewUser,
-    login
+    login,
+    deleteUser,
+    updateUser
 }

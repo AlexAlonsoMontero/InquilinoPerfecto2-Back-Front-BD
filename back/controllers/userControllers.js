@@ -38,10 +38,13 @@ const getAllUsers = async (request, response) => {
 //  */
 const getOneUser = async (request, response) => {
     try {
-        const user = await userService.getOneUser(request.params);
+        const user = await userService.getOneUser(request.query);
         response
             .status(200)
-            .send({ data: user })
+            .send({
+                status: "OK", 
+                data: user 
+            })
 
 
 
@@ -90,11 +93,12 @@ const login = async (request, response) => {
     try {
         const user = (request.body.username ? { 'username': request.body.username } : { 'email': request.body.email });
         user.password = request.body.password;
-        
-        const {token, user: loggedUser} = await userService.login(user);
-        response.header('auth-token',token).json({
-            data:{
-                username:loggedUser.username,
+
+        const { token, user: loggedUser } = await userService.login(user);
+        response.header('auth-token', token).json({
+            status: "OK",
+            data: {
+                username: loggedUser.username,
                 id_usuario: loggedUser.id_usuario,
                 token
             }
@@ -109,31 +113,7 @@ const login = async (request, response) => {
             })
     }
 
-    //         let loginUser  = await findItems(table, user)
-    //         if(loginUser!=0){
-    //             const resultlogin = await bcrypt.compare(request.body.password, loginUser[0].password)
-    //             if (resultlogin){
-                    // const token = generateToken(loginUser[0].id_usuario, loginUser[0].username,loginUser[0].email, loginUser[0].tipo)
-    //                 response.header('authorization',token).json({
-    //                     message: 'Usuario autenticado',
-    //                     username: loginUser[0].username,
-    //                     token:token
-    //                 })
-    //             }else{
-    //                 throw new ErrorNotFoundDB('password')
-    //             }
-    //         }else{
-    //             throw new ErrorNotFoundDB('usuario')
-    //         }
-
-    //     }catch(error){
-    //         console.warn(error.message)
-    //         if(error instanceof ErrorNotFoundDB){
-    //             response.status(error.code).send(error.userMessage)
-    //         }else{
-    //             response.status(500).send("Servicio no disponible")
-    //         }
-    //     }
+    
 
 }
 // /**
@@ -143,6 +123,30 @@ const login = async (request, response) => {
 //  * @description Borrado de usuario
 //  */
 const deleteUser = async (request, response) => {
+    try {
+        const {
+            params: id_usuario
+        } = request
+        await userService.deleteUser(id_usuario)
+        response
+                .status(200)
+                .send({
+                    status: "OK",
+                    data: "delete user"
+                })
+    } catch (error) {
+        response
+            .status(error?.status)
+            .send({
+                status: "FAILED",
+                data: { error: error?.message || error },
+                code: error?.status || 500
+            })
+            
+            
+    }
+
+
     //     finalResponse = await drop(table, request.params)
     //     response
     //         .status(finalResponse.isStatus)
@@ -151,6 +155,11 @@ const deleteUser = async (request, response) => {
 // //TODO: Revisar errores y funcionamiento de final response. no me convence estructura
 
 const updateUser = async (request, response) => {
+    try {
+        await userService.updateUser()
+    } catch ( error) {
+        
+    }
     //     finalResponse = await update(table,request.params, request.body);
     //     response
     //         .status(200)
