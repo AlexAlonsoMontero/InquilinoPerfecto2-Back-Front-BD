@@ -42,8 +42,8 @@ const getOneUser = async (request, response) => {
         response
             .status(200)
             .send({
-                status: "OK", 
-                data: user 
+                status: "OK",
+                data: user
             })
 
 
@@ -113,7 +113,7 @@ const login = async (request, response) => {
             })
     }
 
-    
+
 
 }
 // /**
@@ -129,11 +129,11 @@ const deleteUser = async (request, response) => {
         } = request
         await userService.deleteUser(id_usuario)
         response
-                .status(200)
-                .send({
-                    status: "OK",
-                    data: "delete user"
-                })
+            .status(200)
+            .send({
+                status: "OK",
+                data: "delete user"
+            })
     } catch (error) {
         response
             .status(error?.status)
@@ -142,23 +142,31 @@ const deleteUser = async (request, response) => {
                 data: { error: error?.message || error },
                 code: error?.status || 500
             })
-            
-            
     }
-
-
-    //     finalResponse = await drop(table, request.params)
-    //     response
-    //         .status(finalResponse.isStatus)
-    //         .send(finalResponse.sendMessage)
 }
-// //TODO: Revisar errores y funcionamiento de final response. no me convence estructura
+
 
 const updateUser = async (request, response) => {
     try {
-        await userService.updateUser()
-    } catch ( error) {
-        
+        const {
+            params: id_usuario,
+            body: updateUserParams
+        } = request
+        await userService.updateUser(id_usuario, updateUserParams )
+        response
+            .status(200)
+            .send({
+                status: "OK",
+                data: "Usuario actualizado"
+            })
+    } catch (error) {
+        response
+            .status(error?.status)
+            .send({
+                status: "FAILED",
+                data: { error: error?.message || error },
+                code: error?.status || 500
+            })
     }
     //     finalResponse = await update(table,request.params, request.body);
     //     response

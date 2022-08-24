@@ -88,8 +88,15 @@ const deleteUser = async (id_usuario) => {
     }
 }
 
-const updateUser = () =>{
-
+const updateUser = async(id_usuario, updateUserParams) =>{
+    try {
+        await dbRepository.updateItem('usuarios',id_usuario,updateUserParams)
+    } catch (error) {
+        throw {
+            status: error.status,
+            message: error?.data || error
+        }
+    }
 }
 module.exports = {
     getAllUsers,

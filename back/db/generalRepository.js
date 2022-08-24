@@ -107,6 +107,12 @@ const updateItem = async (table, conditionParams, updateParams) => {
     }
     sentence += `WHERE ${whereConstructor(conditionParams)}`;
     const result = await connection.query(sentence, [...Object.values(updateParams), ...Object.values(conditionParams)])
+    if(result[0].affectedRows === 0){
+        throw {
+            status: 400,
+            data: `No se ha podido borrar en ${table}, no se ha localizado el registro`
+        }
+    }
     return (result[0])
 
 }
@@ -125,7 +131,7 @@ const deleteItem = async (table, object) => {
         if(result[0].affectedRows ===0){
             throw {
                 status: 400,
-                data: `No se ha podido borrar en ${table}, no se ha localizado el usuario`
+                data: `No se ha podido actualizar en ${table}, no se ha localizado el registro`
             }
         };
     } catch (error) {
