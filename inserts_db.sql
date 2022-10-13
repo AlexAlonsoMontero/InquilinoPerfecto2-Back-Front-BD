@@ -1,4 +1,4 @@
-USE inmoweb2_0;
+USE inmoweb3_0;
 
 /*usuarios*/
 

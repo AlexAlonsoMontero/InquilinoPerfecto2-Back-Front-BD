@@ -1,6 +1,5 @@
 const dbRepository = require('../db/generalRepository');
-const { generateToken } = require('../helpers/generateToken');
-
+const jwt = require('jsonwebtoken')
 const bcrypt = require('bcrypt');
 
 const getAllUsers = async () => {
@@ -20,7 +19,6 @@ const getOneUser = async (searchParams) => {
 
         return result
     } catch (error) {
-        console.log(error);
         throw {
             status: error.status,
             data: error.data
@@ -31,6 +29,7 @@ const getOneUser = async (searchParams) => {
 
 const createNewUser = async (newUserData) => {
     try {
+        console.log('llega')
         const codePassword = await bcrypt.hash(newUserData.password, 10)
         const newUser = {
             ...newUserData,
@@ -91,6 +90,7 @@ const deleteUser = async (id_usuario) => {
 const updateUser = async(id_usuario, updateUserParams) =>{
     try {
         await dbRepository.updateItem('usuarios',id_usuario,updateUserParams)
+        
     } catch (error) {
         throw {
             status: error.status,
@@ -98,6 +98,31 @@ const updateUser = async(id_usuario, updateUserParams) =>{
         }
     }
 }
+
+// /**
+//  * 
+//  * @param {strintg} id_usuario 
+//  * @param {string} username 
+//  * @param {string} tipo 
+//  * @returns {string} Devuelve el token generado
+//  */
+const generateToken = (id_usuario, username, email, tipo) => {
+    const tokenPayLoad = {
+        id_usuario: id_usuario,
+        username: username,
+        email: email,
+        tipo: tipo
+    }
+    const token = jwt.sign(
+        tokenPayLoad,
+        process.env.TOKEN_SECRET,
+        { expiresIn: '30d' }
+    )
+    return token
+}
+
+
+
 module.exports = {
     getAllUsers,
     getOneUser,

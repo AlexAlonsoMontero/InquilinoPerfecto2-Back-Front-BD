@@ -3,7 +3,7 @@ const jwt = require('jsonwebtoken')
 
 const generateToken = (user) =>{
     
-    const tokenPauyload = {
+    const tokenPayload = {
         username: user.username,
         id_usuario: user.id_usuario,
         email: user.email,
@@ -11,7 +11,7 @@ const generateToken = (user) =>{
 
     }
 
-    return jwt.sign(tokenPauyload, process.env.TOKEN_SECRET,{ expiresIn: '3h'})
+    return jwt.sign(tokenPayload, process.env.TOKEN_SECRET,{ expiresIn: '3h'})
 
 }
 

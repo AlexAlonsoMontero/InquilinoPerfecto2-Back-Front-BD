@@ -17,14 +17,14 @@ const getAllUsers = async (request, response) => {
             .status(200)
             .send({
                 status: "OK",
-                data: users
+                users
             })
     } catch (error) {
         response
             .status(error?.status || 500)
             .send({
                 status: "FAILED",
-                data: ({ error: error?.message || error })
+                message: ({ error: error?.message || 'Error al localizar los usuario' })
             })
     }
 
@@ -43,7 +43,7 @@ const getOneUser = async (request, response) => {
             .status(200)
             .send({
                 status: "OK",
-                data: user
+                user
             })
 
 
@@ -51,7 +51,7 @@ const getOneUser = async (request, response) => {
     } catch (error) {
         response
             .status(error?.status)
-            .send({ status: "FAILED", data: { error: error?.message || error } })
+            .send({ status: "FAILED", message: { error: error?.message || 'No se han localizado el usario' } })
     }
 }
 
@@ -68,14 +68,14 @@ const createNewUser = async (request, response) => {
             .status(200)
             .send({
                 status: "OK",
-                data: newUser
+                newUser
             })
     } catch (error) {
         response
-            .status(error?.status)
+            .status(error?.status || 500)
             .send({
                 status: "FAILED",
-                data: { error: error?.message || error },
+                message: { error: error?.message || 'Error al crear usuario.' },
                 code: error?.status || 500
             })
     }
@@ -93,22 +93,25 @@ const login = async (request, response) => {
     try {
         const user = (request.body.username ? { 'username': request.body.username } : { 'email': request.body.email });
         user.password = request.body.password;
-
         const { token, user: loggedUser } = await userService.login(user);
+
+
         response.header('auth-token', token).json({
-            status: "OK",
+            status: 200,
             data: {
                 username: loggedUser.username,
                 id_usuario: loggedUser.id_usuario,
                 token
             }
+
+
         })
     } catch (error) {
         response
-            .status(error?.status)
+            .status(error?.status || 500)
             .send({
                 status: "FAILED",
-                data: { error: error?.message || error },
+                message: { error: error?.message || 'Error en el login.' },
                 code: error?.status || 500
             })
     }
@@ -132,14 +135,14 @@ const deleteUser = async (request, response) => {
             .status(200)
             .send({
                 status: "OK",
-                data: "delete user"
+                info: "delete user"
             })
     } catch (error) {
         response
             .status(error?.status)
             .send({
                 status: "FAILED",
-                data: { error: error?.message || error },
+                message: { error: error?.message || 'No se ha podido borrar el usuario' },
                 code: error?.status || 500
             })
     }
@@ -152,51 +155,24 @@ const updateUser = async (request, response) => {
             params: id_usuario,
             body: updateUserParams
         } = request
-        await userService.updateUser(id_usuario, updateUserParams )
+        await userService.updateUser(id_usuario, updateUserParams)
         response
             .status(200)
             .send({
                 status: "OK",
-                data: "Usuario actualizado"
+                info: "Usuario actualizado"
             })
     } catch (error) {
+
         response
-            .status(error?.status)
+            .status(error?.status || 500)
             .send({
                 status: "FAILED",
-                data: { error: error?.message || error },
+                info: { error: error?.message || 'No se ha podido actualizar el usuario' },
                 code: error?.status || 500
             })
     }
-    //     finalResponse = await update(table,request.params, request.body);
-    //     response
-    //         .status(200)
-    //         .send(finalResponse.sendMessage)
 }
-
-
-// /**
-//  * 
-//  * @param {strintg} id_usuario 
-//  * @param {string} username 
-//  * @param {string} tipo 
-//  * @returns {string} Devuelve el token generado
-//  */
-const generateToken = (id_usuario, username, email, tipo) => {
-    //     const tokenPayLoad ={
-    //         id_usuario : id_usuario,
-    //         username : username,
-    //         email : email,
-    //         tipo : tipo
-    //     }
-    //     const token = jwt.sign(
-    //         tokenPayLoad,
-    //         process.env.TOKEN_SECRET,
-    //         { expiresIn : '30d' }
-    //     )
-    //     return token
-}
-
 
 
 module.exports = {

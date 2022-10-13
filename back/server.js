@@ -5,8 +5,6 @@ const express = require('express');
 const morgan = require ('morgan');
 
 
-const { validateToken } = require('./middlewares/validateToken')
-
 const app = express();
 
 require('dotenv').config();
@@ -24,8 +22,7 @@ app.use('/api/v1/users', userRouterV1);
 
 
 
-const port = process.env.WEB_PORT
-const host = process.env.WEB_HOST
-app.listen(port,host,()=>{
-    console.log(`Server runing at http://${host}:${port}`)
+const port = process.env.PORT
+app.listen(port,()=>{
+    console.log(`Server runing at port ${port}`)
 });

@@ -1,6 +1,6 @@
 DROP DATABASE inmoweb2_0;
-CREATE DATABASE IF NOT EXISTS inmoweb2_0;
-USE inmoweb2_0;
+CREATE DATABASE IF NOT EXISTS inmoweb3_0;
+USE inmoweb3_0;
 
 CREATE TABLE usuarios(
 	id_usuario INT UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -14,6 +14,8 @@ CREATE TABLE usuarios(
 	nombre VARCHAR(256) NOT NULL,
 	apellidos VARCHAR(512) NOT NULL,
 	telefono VARCHAR(12) NOT NULL,
+    delete_user BOOLEAN DEFAULT FALSE,
+    delete_user_date DATETIME DEFAULT NULL
 	
 	CONSTRAINT UNIQUE KEY UK_usuarios_username (username),
     CONSTRAINT UNIQUE KEY UK_usuarios_email (email),
