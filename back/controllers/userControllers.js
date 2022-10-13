@@ -1,130 +1,184 @@
-const { getAll, find, add, drop, update } = require('./genericControllers')
-const { ErrorNotFoundDB, ErrorNoParams } = require ('../customErrors/dbErrors')
-const { findItems } = require('../infraestructure/repository/generalRepository')
-const bcrypt = require('bcrypt')
+const userService = require('../services/userServices');
+
+
 const jwt = require('jsonwebtoken')
-const { response } = require('express')
-
-let finalResponse = {isStatus:"",sendMessage:""}
-// const finalResponse = require('../helpers/finalResponse')
-
 const table = "usuarios"
 
-const getAllUsers = async(request,response) =>{
-    finalResponse = await getAll(table)
-    response.status(finalResponse.isStatus).send({
-        info: "Búsqueda de todos los usuarios",
-        data: finalResponse.sendMessage
-    })
+// /**
+//  * 
+//  * @param {object} request 
+//  * @param {object} response 
+//  * @returns { object } response.status informando de estado de la operacion
+//  */
+const getAllUsers = async (request, response) => {
+    try {
+        const users = await userService.getAllUsers();
+        response
+            .status(200)
+            .send({
+                status: "OK",
+                users
+            })
+    } catch (error) {
+        response
+            .status(error?.status || 500)
+            .send({
+                status: "FAILED",
+                message: ({ error: error?.message || 'Error al localizar los usuario' })
+            })
+    }
+
 }
 
-const findUsers = async(request , response) =>{
-    finalResponse = await find(table,request.query)
-    response
-        .status(finalResponse.isStatus)
-        .send({
-            info: "Busqueda de usuario con parametros",
-            data: finalResponse.sendMessage
-        })
+// /**
+//  * 
+//  * @param {object} request 
+//  * @param {object} response 
+//  * @returns { object } response.status informando de estado de la operacion
+//  */
+const getOneUser = async (request, response) => {
+    try {
+        const user = await userService.getOneUser(request.query);
+        response
+            .status(200)
+            .send({
+                status: "OK",
+                user
+            })
+
+
+
+    } catch (error) {
+        response
+            .status(error?.status)
+            .send({ status: "FAILED", message: { error: error?.message || 'No se han localizado el usario' } })
+    }
 }
 
-const addUser = async(request, response) => {
-    request.body.password = await bcrypt.hash(request.body.password,10)
-    finalResponse = await add(table,request.body)
-    response
-        .status(finalResponse.isStatus)
-        .send({
-            info: "Añadir usuario",
-            message: finalResponse.sendMessage
-        })
+// /**
+//  * 
+//  * @param {object} request 
+//  * @param {object} response 
+//  * @returns { object } response.status informando de estado de la operacion
+//  */
+const createNewUser = async (request, response) => {
+    try {
+        const newUser = await userService.createNewUser(request.body);
+        response
+            .status(200)
+            .send({
+                status: "OK",
+                newUser
+            })
+    } catch (error) {
+        response
+            .status(error?.status || 500)
+            .send({
+                status: "FAILED",
+                message: { error: error?.message || 'Error al crear usuario.' },
+                code: error?.status || 500
+            })
+    }
+
 }
 
-/**
- * 
- * @param {object} request 
- * @param {object} response 
- * @returns { object } response.status informando de estado de la operacion
- */
- const login = async(request, response)=>{
-    try{
-        const user = (request.body.username?{'username':request.body.username}:{'email':request.body.email})
-        let loginUser  = await findItems(table, user)
-        if(loginUser!=0){
-            const resultlogin = await bcrypt.compare(request.body.password, loginUser[0].password)
-            if (resultlogin){
-                const token = generateToken(loginUser[0].id_usuario, loginUser[0].username,loginUser[0].email, loginUser[0].tipo)
-                response.header('authorization',token).json({
-                    message: 'Usuario autenticado',
-                    username: loginUser[0].username,
-                    token:token
-                })
-            }else{
-                throw new ErrorNotFoundDB('password')
+// /**
+//  * 
+//  * @param {object} request 
+//  * @param {object} response 
+//  * @returns { object } response.status informando de estado de la operacion
+//  */
+const login = async (request, response) => {
+
+    try {
+        const user = (request.body.username ? { 'username': request.body.username } : { 'email': request.body.email });
+        user.password = request.body.password;
+        const { token, user: loggedUser } = await userService.login(user);
+
+
+        response.header('auth-token', token).json({
+            status: 200,
+            data: {
+                username: loggedUser.username,
+                id_usuario: loggedUser.id_usuario,
+                token
             }
-        }else{
-            throw new ErrorNotFoundDB('usuario')
-        }
-        
-    }catch(error){
-        console.warn(error.message)
-        if(error instanceof ErrorNotFoundDB){
-            response.status(error.code).send(error.userMessage)
-        }else{
-            response.status(500).send("Servicio no disponible")
-        }
+
+
+        })
+    } catch (error) {
+        response
+            .status(error?.status || 500)
+            .send({
+                status: "FAILED",
+                message: { error: error?.message || 'Error en el login.' },
+                code: error?.status || 500
+            })
     }
 
+
+
 }
-/**
- *
- * @param {*} request
- * @param {*} response
- * @description Borrado de usuario
- */
-const deleteUser = async(request, response) => {
-    finalResponse = await drop(table, request.params)
-    response
-        .status(finalResponse.isStatus)
-        .send(finalResponse.sendMessage)
-}
-
-
-const updateUser = async(request, response)=>{
-    finalResponse = await update(table,request.params, request.body);
-    response
-        .status(200)
-        .send(finalResponse.sendMessage)
-}
-
-
-/**
- * 
- * @param {strintg} id_usuario 
- * @param {string} username 
- * @param {string} tipo 
- * @returns {string} Devuelve el token generado
- */
-const generateToken = (id_usuario,username,email,tipo) =>{
-    const tokenPayLoad ={
-        id_usuario : id_usuario,
-        username : username,
-        email : email,
-        tipo : tipo
+// /**
+//  *
+//  * @param {*} request
+//  * @param {*} response
+//  * @description Borrado de usuario
+//  */
+const deleteUser = async (request, response) => {
+    try {
+        const {
+            params: id_usuario
+        } = request
+        await userService.deleteUser(id_usuario)
+        response
+            .status(200)
+            .send({
+                status: "OK",
+                info: "delete user"
+            })
+    } catch (error) {
+        response
+            .status(error?.status)
+            .send({
+                status: "FAILED",
+                message: { error: error?.message || 'No se ha podido borrar el usuario' },
+                code: error?.status || 500
+            })
     }
-    const token = jwt.sign(
-        tokenPayLoad,
-        process.env.TOKEN_SECRET,
-        { expiresIn : '30d' }
-    )
-    return token
 }
 
+
+const updateUser = async (request, response) => {
+    try {
+        const {
+            params: id_usuario,
+            body: updateUserParams
+        } = request
+        await userService.updateUser(id_usuario, updateUserParams)
+        response
+            .status(200)
+            .send({
+                status: "OK",
+                info: "Usuario actualizado"
+            })
+    } catch (error) {
+
+        response
+            .status(error?.status || 500)
+            .send({
+                status: "FAILED",
+                info: { error: error?.message || 'No se ha podido actualizar el usuario' },
+                code: error?.status || 500
+            })
+    }
+}
 
 
 module.exports = {
     getAllUsers,
-    findUsers,
-    addUser,
+    getOneUser,
+    createNewUser,
     login,
     deleteUser,
     updateUser
