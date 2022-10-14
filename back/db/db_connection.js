@@ -15,7 +15,10 @@ const getConnection = () => {
         }
         return pool
     }catch(error){
-        console.log(error)
+        throw{
+            status: "FAILED",
+            message: "Error conexión base de datos"
+        }
     }
     
     

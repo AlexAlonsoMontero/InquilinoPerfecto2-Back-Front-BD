@@ -11,17 +11,21 @@ let isStatus, sendMessage
  */
 const validateToken = (request, response, next) => {
     try {
-        
         const { authorization } = request.headers
         if (!authorization || !authorization.startsWith('Bearer ')) {
             throw new ErrorInvalidToken()
         }
-
         const token = authorization.split(' ')[1]
-        
-        const decodedToken = jwt.verify(token, process.env.TOKEN_SECRET)
-        
-        
+        const decodedToken = jwt.verify(token, process.env.TOKEN_SECRET);
+        if (request.params.id_usuario != decodedToken.id_usuario){
+            throw new Error( "Token incorrecto" )
+        }
+        request.body.user= {
+            username: decodedToken.username,
+            id_usuario: decodedToken.id_usuario,
+            tipo: decodedToken.tipo,
+            token
+        }
         next()
     } catch (error) {
         if (error instanceof ErrorInvalidToken) {
@@ -30,9 +34,12 @@ const validateToken = (request, response, next) => {
 
         } else {
             isStatus = 403
-            sendMessage = "Error de interno"
+            sendMessage = error?.message || "Error al validar token de usuario"
         }
-        response.status(403).send(sendMessage)
+        response.status(403).send({
+            status: "FAILED",
+            message: sendMessage,
+            })
     }
 
 

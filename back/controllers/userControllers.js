@@ -1,7 +1,7 @@
 const userService = require('../services/userServices');
-
-
-const jwt = require('jsonwebtoken')
+//TODO revisar seguridad, url que sólo se puede accedere validado
+//TODO revisar seguridad, no devolver contraseña
+//TODO revisar funcionalidad cambiar contraseña
 const table = "usuarios"
 
 // /**

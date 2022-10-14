@@ -29,7 +29,6 @@ const getOneUser = async (searchParams) => {
 
 const createNewUser = async (newUserData) => {
     try {
-        console.log('llega')
         const codePassword = await bcrypt.hash(newUserData.password, 10)
         const newUser = {
             ...newUserData,
@@ -106,15 +105,10 @@ const updateUser = async(id_usuario, updateUserParams) =>{
 //  * @param {string} tipo 
 //  * @returns {string} Devuelve el token generado
 //  */
-const generateToken = (id_usuario, username, email, tipo) => {
-    const tokenPayLoad = {
-        id_usuario: id_usuario,
-        username: username,
-        email: email,
-        tipo: tipo
-    }
+const generateToken = (dbUser) => {
+    const tokenPayLoad = { id_usuario ,username, email, tipo } = dbUser
     const token = jwt.sign(
-        tokenPayLoad,
+        {...tokenPayLoad},
         process.env.TOKEN_SECRET,
         { expiresIn: '30d' }
     )

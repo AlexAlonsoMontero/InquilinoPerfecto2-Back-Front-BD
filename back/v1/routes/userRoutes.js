@@ -1,6 +1,6 @@
 const express = require('express');
 const { validarCampos, } = require('../../middlewares/validarCampos');
-const { check, body, oneOf } = require('express-validator')
+const { check, oneOf } = require('express-validator');
 const customValidations = require('../../helpers/customValidatons')
 const userController = require('../../controllers/userControllers');
 
