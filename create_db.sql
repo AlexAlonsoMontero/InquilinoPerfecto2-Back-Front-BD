@@ -1,6 +1,6 @@
 DROP DATABASE inmoweb2_0;
-CREATE DATABASE IF NOT EXISTS inmoweb3_0;
-USE inmoweb3_0;
+CREATE DATABASE IF NOT EXISTS inmoweb2_0;
+USE inmoweb2_0;
 
 CREATE TABLE usuarios(
 	id_usuario INT UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -8,14 +8,14 @@ CREATE TABLE usuarios(
 	password VARCHAR(64) NOT NULL,
 	email VARCHAR(256) NOT NULL,
 	tipo ENUM ('INQUILINO','CASERO','INQUILINO/CASERO','ADMINISTRADOR'),
-	activated_at DATETIME DEFAULT NULL,
+	activated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	activated_code VARCHAR(64) DEFAULT NULL,
 	avatar VARCHAR(256) NOT NULL,
 	nombre VARCHAR(256) NOT NULL,
 	apellidos VARCHAR(512) NOT NULL,
 	telefono VARCHAR(12) NOT NULL,
     delete_user BOOLEAN DEFAULT FALSE,
-    delete_user_date DATETIME DEFAULT NULL
+    delete_user_date TIMESTAMP DEFAULT NULL,
 	
 	CONSTRAINT UNIQUE KEY UK_usuarios_username (username),
     CONSTRAINT UNIQUE KEY UK_usuarios_email (email),
@@ -27,7 +27,7 @@ CREATE TABLE inmuebles (
 	id_inmueble INT UNSIGNED NOT NULL AUTO_INCREMENT,
     fk_usuario  INT UNSIGNED NOT NULL,
 	tipo_via ENUM ('CALLE','AVENIDA','CAMINO','CARRETERA','OTROS') NOT NULL,
-	fecha_alta DATETIME DEFAULT NULL,
+	fecha_alta TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	tipo_inmueble ENUM ('PISO','ESTUDIO','CASA','ADOSADO','OTROS'),
 	lng DECIMAL(9,6) DEFAULT 0,
     lat DECIMAL(9,6) DEFAULT 0,
@@ -50,12 +50,14 @@ CREATE TABLE inmuebles (
     ascensor BOOLEAN DEFAULT FALSE,
     piscina BOOLEAN DEFAULT FALSE,
 	wifi BOOLEAN DEFAULT FALSE,
-	visible BOOLEAN DEFAULT TRUE,
+	delete_inmueble BOOLEAN DEFAULT FALSE,
+    delete_inmueble_date TIMESTAMP DEFAULT NULL,
 
     
     CONSTRAINT FK_inmuebles_usuarios FOREIGN KEY (fk_usuario)
     REFERENCES usuarios(id_usuario),
-    CONSTRAINT PK_inmueble PRIMARY KEY(id_inmueble)
+    CONSTRAINT PK_inmueble PRIMARY KEY(id_inmueble),
+    UNIQUE (calle,numero,piso,ciudad,provincia)
 );
 
 CREATE TABLE fotos_inmuebles (
@@ -72,6 +74,9 @@ CREATE TABLE anuncios (
     id_anuncio INT UNSIGNED NOT NULL AUTO_INCREMENT,
     precio FLOAT(8,2),
     fk_inmueble INT UNSIGNED NOT NULL,
+    fecha_alta TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    delete_anuncio_date TIMESTAMP DEFAULT NULL,
+	delete_anuncio BOOLEAN DEFAULT FALSE,
     CONSTRAINT FK_anuncios_inmuebles FOREIGN KEY (fk_inmueble)
     REFERENCES inmuebles(id_inmueble),
     CONSTRAINT PK_anuncios PRIMARY KEY (id_anuncio)
@@ -82,9 +87,10 @@ CREATE TABLE reservas (
     id_reserva INT UNSIGNED NOT NULL AUTO_INCREMENT,
     fk_inmueble INT UNSIGNED NOT NULL,
     fk_usuario_inquilino  INT UNSIGNED NOT NULL,
-    fecha_entrada DATE,
-    fecha_salida DATE,
-    estado_reeserva ENUM ("SOLICITADA","CANCELADA","ACEPTADA","RECHAZADA") NOT NULL DEFAULT "SOLICITADA",
+    fecha_entrada TIMESTAMP NOT NULL,
+    fecha_salida TIMESTAMP NOT NULL,
+    estado_reeserva ENUM ("SOLICITADA","CANCELADA","ACEPTADA","RECHAZADA", "CONFIRMADA") NOT NULL DEFAULT "SOLICITADA",
+	visible BOOLEAN DEFAULT TRUE,
     CONSTRAINT FK_reservas_idInmueble FOREIGN KEY (fk_inmueble)
     REFERENCES inmuebles(id_inmueble),
     CONSTRAINT FK_reservas_usuarioInquilino FOREIGN KEY (fk_usuario_inquilino)
@@ -100,6 +106,7 @@ CREATE TABLE resenas_inmuebles(
     foto3 VARCHAR(512),
     descripcion VARCHAR(512),
     calificacion SMALLINT,
+	visible BOOLEAN DEFAULT TRUE,
     CONSTRAINT FK_resenaInmueble_reserva  FOREIGN KEY (fk_inmuebleReserva)
     REFERENCES reservas(id_reserva),
     CONSTRAINT PK_resenas_inmuebles PRIMARY KEY (id_resena)
@@ -110,6 +117,7 @@ CREATE TABLE resenas_inquilinos(
     fk_inquilinoReserva INT UNSIGNED NOT NULL,
     descripcion VARCHAR(512),
     calificacion SMALLINT,
+	visible BOOLEAN DEFAULT TRUE,
     CONSTRAINT FK_resenaIngquilino_reserva  FOREIGN KEY (fk_inquilinoReserva)
     REFERENCES reservas(id_reserva),
     CONSTRAINT PK_resenas_inquilinos PRIMARY KEY (id_resena)
