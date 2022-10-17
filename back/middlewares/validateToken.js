@@ -17,14 +17,16 @@ const validateToken = (request, response, next) => {
         }
         const token = authorization.split(' ')[1]
         const decodedToken = jwt.verify(token, process.env.TOKEN_SECRET);
-        if (request.params.id_usuario != decodedToken.id_usuario){
-            throw new Error( "Token incorrecto" )
+        if (request.params.id_usuario != decodedToken.id_usuario) {
+            throw new Error("Token incorrecto")
         }
-        request.body.user= {
-            username: decodedToken.username,
-            id_usuario: decodedToken.id_usuario,
-            tipo: decodedToken.tipo,
-            token
+        request.auth = {
+            user: {
+                username: decodedToken.username,
+                id_usuario: decodedToken.id_usuario,
+                tipo: decodedToken.tipo,
+                token
+            }
         }
         next()
     } catch (error) {
@@ -39,7 +41,7 @@ const validateToken = (request, response, next) => {
         response.status(403).send({
             status: "FAILED",
             message: sendMessage,
-            })
+        })
     }
 
 

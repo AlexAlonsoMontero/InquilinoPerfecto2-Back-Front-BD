@@ -1,8 +1,9 @@
+const { response } = require('express');
 const inmuebleService = require('../services/inmuebleServices');
 
 const createNewInmueble = async (request, response) => {
     try {
-        const { inmueble } = request.body;
+        const inmueble  = request.body;
         const id_usuario = request.params.id_usuario;
         await inmuebleService.createNewInmueble(inmueble, id_usuario)
         response
@@ -22,6 +23,122 @@ const createNewInmueble = async (request, response) => {
     }
 }
 
+const getAllInmuebles = async( request, response )=>{
+    try{
+        const inmuebles  = await inmuebleService.getAllInmuebles()
+        response
+        .status(200)
+        .send({
+            status: "OK",
+            info: "Inmuebles almacenados",
+            total: inmuebles.length,
+            inmuebles,
+
+        })
+    }catch(error){
+        response
+        .status (error?.status || 500)
+        .send ({
+            status: "FAILED",
+            message: error.message
+        })
+    }
+
+}
+
+const getOneInmueble = async( request, response )=>{
+    try {
+        console.log(request.params)
+        const inmueble = await inmuebleService.getOneInmueble(request.params);
+        response
+            .status(200)
+            .send({
+                status: "OK",
+                info:"Inmueble",
+                inmueble
+            })
+    } catch (error) {
+        response
+        .status (error?.status || 500)
+        .send ({
+            status: "FAILED",
+            message: error.message
+        })
+    }
+
+}
+
+const deleteInmueble = async( request, response )=>{
+    try {
+        await inmuebleService.deleteInmueble(request.params);
+        response
+            .status(200)
+            .send({
+                status: "OK",
+                info:"Inmueble borrado con éxito"
+            })
+    } catch (error) {
+        response
+        .status (error?.status || 500)
+        .send ({
+            status: "FAILED",
+            message: error.message
+        })
+    }
+
+}
+
+const updateInmueble = async( request, response)=>{
+    try {
+        const {
+            params: id_imueble,
+            body: updateiInmuebleParams
+        } = request
+        await inmuebleService.updateInmueble(id_imueble, updateiInmuebleParams);
+        response
+            .status(200)
+            .send({
+                status: "OK",
+                info: "Inmueble actualizado"
+            })
+    } catch (error) {
+        response
+        .status (error?.status || 500)
+        .send ({
+            status: "FAILED",
+            message: error.message
+        })
+    }
+
+}
+
+const getInmueblesByUser = async ( request, response ) =>{
+    try {
+        const inmuebles = await inmuebleService.getInmuebleByUser(request.params)
+        response
+        .status(200)
+        .send({
+            status: 'OK',
+            info: "Inmuebles por usuario",
+            total: inmuebles.length,
+            inmuebles
+        })
+    } catch (error) {
+        response
+        .status (error?.status || 500)
+        .send ({
+            status: "FAILED",
+            message: error.message
+        })
+    }
+}
+
 module.exports = {
-    createNewInmueble
+    createNewInmueble,
+    getAllInmuebles,
+    getOneInmueble,
+    deleteInmueble,
+    updateInmueble,
+    getInmueblesByUser,
+
 }

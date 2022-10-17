@@ -14,8 +14,8 @@ CREATE TABLE usuarios(
 	nombre VARCHAR(256) NOT NULL,
 	apellidos VARCHAR(512) NOT NULL,
 	telefono VARCHAR(12) NOT NULL,
-    delete_user BOOLEAN DEFAULT FALSE,
-    delete_user_date TIMESTAMP DEFAULT NULL,
+    deleted BOOLEAN DEFAULT FALSE,
+    deleted_date TIMESTAMP DEFAULT NULL,
 	
 	CONSTRAINT UNIQUE KEY UK_usuarios_username (username),
     CONSTRAINT UNIQUE KEY UK_usuarios_email (email),
@@ -26,7 +26,7 @@ CREATE TABLE usuarios(
 CREATE TABLE inmuebles (
 	id_inmueble INT UNSIGNED NOT NULL AUTO_INCREMENT,
     fk_usuario  INT UNSIGNED NOT NULL,
-	tipo_via ENUM ('CALLE','AVENIDA','CAMINO','CARRETERA','OTROS') NOT NULL,
+	tipo_via ENUM ('CALLE','AVENIDA','CAMINO','CARRETERA','OTROS') DEFAULT 'OTROS',
 	fecha_alta TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	tipo_inmueble ENUM ('PISO','ESTUDIO','CASA','ADOSADO','OTROS'),
 	lng DECIMAL(9,6) DEFAULT 0,
@@ -36,8 +36,8 @@ CREATE TABLE inmuebles (
     numero VARCHAR (16),
     piso VARCHAR (16),
     ciudad VARCHAR(128) NOT NULL,
-    provincia VARCHAR(128)NOT NULL,
-    comunidad VARCHAR(128),
+    provincia VARCHAR(128) NOT NULL,
+    comunidad VARCHAR(128) NOT NULL,
     pais VARCHAR (128) NOT NULL,
     cp VARCHAR (5) NOT NULL,
     banos SMALLINT NOT NULL DEFAULT 0,
@@ -50,8 +50,8 @@ CREATE TABLE inmuebles (
     ascensor BOOLEAN DEFAULT FALSE,
     piscina BOOLEAN DEFAULT FALSE,
 	wifi BOOLEAN DEFAULT FALSE,
-	delete_inmueble BOOLEAN DEFAULT FALSE,
-    delete_inmueble_date TIMESTAMP DEFAULT NULL,
+	deleted BOOLEAN DEFAULT FALSE,
+    delete_date TIMESTAMP DEFAULT NULL,
 
     
     CONSTRAINT FK_inmuebles_usuarios FOREIGN KEY (fk_usuario)
@@ -75,8 +75,8 @@ CREATE TABLE anuncios (
     precio FLOAT(8,2),
     fk_inmueble INT UNSIGNED NOT NULL,
     fecha_alta TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    delete_anuncio_date TIMESTAMP DEFAULT NULL,
-	delete_anuncio BOOLEAN DEFAULT FALSE,
+	deleted BOOLEAN DEFAULT FALSE,
+    delete_date TIMESTAMP DEFAULT NULL,
     CONSTRAINT FK_anuncios_inmuebles FOREIGN KEY (fk_inmueble)
     REFERENCES inmuebles(id_inmueble),
     CONSTRAINT PK_anuncios PRIMARY KEY (id_anuncio)

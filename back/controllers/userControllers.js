@@ -1,15 +1,10 @@
 const userService = require('../services/userServices');
-//TODO revisar seguridad, url que sólo se puede accedere validado
 //TODO revisar seguridad, no devolver contraseña
 //TODO revisar funcionalidad cambiar contraseña
+//TODO crear método no visibles, borrar de la base de datos sólo lo puede hacer el administrador
 const table = "usuarios"
 
-// /**
-//  * 
-//  * @param {object} request 
-//  * @param {object} response 
-//  * @returns { object } response.status informando de estado de la operacion
-//  */
+
 const getAllUsers = async (request, response) => {
     try {
         const users = await userService.getAllUsers();
@@ -17,6 +12,7 @@ const getAllUsers = async (request, response) => {
             .status(200)
             .send({
                 status: "OK",
+                total: users.length,
                 users
             })
     } catch (error) {
@@ -30,12 +26,7 @@ const getAllUsers = async (request, response) => {
 
 }
 
-// /**
-//  * 
-//  * @param {object} request 
-//  * @param {object} response 
-//  * @returns { object } response.status informando de estado de la operacion
-//  */
+
 const getOneUser = async (request, response) => {
     try {
         const user = await userService.getOneUser(request.query);
@@ -55,12 +46,7 @@ const getOneUser = async (request, response) => {
     }
 }
 
-// /**
-//  * 
-//  * @param {object} request 
-//  * @param {object} response 
-//  * @returns { object } response.status informando de estado de la operacion
-//  */
+
 const createNewUser = async (request, response) => {
     try {
         const newUser = await userService.createNewUser(request.body);
@@ -82,12 +68,6 @@ const createNewUser = async (request, response) => {
 
 }
 
-// /**
-//  * 
-//  * @param {object} request 
-//  * @param {object} response 
-//  * @returns { object } response.status informando de estado de la operacion
-//  */
 const login = async (request, response) => {
 
     try {
@@ -119,12 +99,7 @@ const login = async (request, response) => {
 
 
 }
-// /**
-//  *
-//  * @param {*} request
-//  * @param {*} response
-//  * @description Borrado de usuario
-//  */
+
 const deleteUser = async (request, response) => {
     try {
         const {
@@ -174,12 +149,11 @@ const updateUser = async (request, response) => {
     }
 }
 
-
 module.exports = {
     getAllUsers,
     getOneUser,
     createNewUser,
     login,
     deleteUser,
-    updateUser
+    updateUser,
 }
