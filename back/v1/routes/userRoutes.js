@@ -1,8 +1,11 @@
 const express = require('express');
 const { validarCampos, } = require('../../middlewares/validarCampos');
-const { check, body, oneOf } = require('express-validator')
+const { check, oneOf } = require('express-validator');
 const customValidations = require('../../helpers/customValidatons')
 const userController = require('../../controllers/userControllers');
+const { validateToken } = require('../../middlewares/validateToken');
+const validateUser = require('../../middlewares/validarTypeUser');
+
 
 const router = express.Router();
 
@@ -23,22 +26,28 @@ router
     .post('/login',
         [
             oneOf([
-            check('username')
-                .isString().notEmpty()
-                .isLength({ min: 3 })
-                .withMessage('Invalid username')
-                .bail()
+                check('username')
+                    .isString().notEmpty()
+                    .isLength({ min: 3 })
+                    .withMessage('Invalid username')
+                    .bail()
                 ,
-            check('email', 'Please enter a valid e-mail!')
-                .isEmail().notEmpty().bail()
+                check('email', 'Please enter a valid e-mail!')
+                    .isEmail().notEmpty().bail()
             ], 'Nombre de usuario o email incorrectos')
             , validarCampos
         ]
         , userController.login)
-    .put('/:id_usuario', userController.updateUser)
-    .delete('/:id_usuario', userController.deleteUser)
-
-// .get('/find', getOneUser)
+    .put('/:id_usuario', 
+        validateToken,
+        userController.updateUser
+    )
+    .delete('/:id_usuario', 
+        validateToken,
+        validateUser.validateAdministrador,
+        userController.deleteUser
+    )
+    .get('/find', userController.getOneUser)
 
 
 module.exports = router
