@@ -1,4 +1,5 @@
 const userService = require('../services/userServices');
+const { sendRegisterMail } = require('../utils/smtp');
 //TODO revisar seguridad, no devolver contraseña
 //TODO revisar funcionalidad cambiar contraseña
 //TODO crear método no visibles, borrar de la base de datos sólo lo puede hacer el administrador
@@ -8,6 +9,7 @@ const table = "usuarios"
 const getAllUsers = async (request, response) => {
     try {
         const users = await userService.getAllUsers();
+        sendRegisterMail();
         response
             .status(200)
             .send({
