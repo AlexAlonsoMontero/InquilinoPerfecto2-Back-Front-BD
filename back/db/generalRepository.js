@@ -11,9 +11,9 @@ const connection = getConnection()
  * @description Devuelve todos los datos que existan en la tabla pasada
  * como parametro table
  */
-const getAllItems = async (table) => {
+const getAllItems = async (table, deleted= false) => {
     try {
-        const question = await connection.query(`SELECT * FROM ${table}`)
+        const question = await connection.query(`SELECT * FROM ${table} WHERE deleted = ${deleted}`)
         return question[0]
     } catch (error) {
         throw { status: 500, message: error };
@@ -30,9 +30,9 @@ const getAllItems = async (table) => {
  * @description Devuelve todos los datos que existan en la tabla pasada
  * como parametro table, y que concuerden con el objeto paado enel parametro param
  */
-const getOneItem = async (table, param) => {
+const getOneItem = async (table, param, deleted=false) => {
     try {
-        const condition = `SELECT * FROM ${table} WHERE ${Object.keys(param)[0]} = ? `;
+        const condition = `SELECT * FROM ${table} WHERE ${Object.keys(param)[0]} = ? AND deleted=${deleted}`;
         const result = await connection.query(condition, Object.values(param)[0]);
         if (!result[0][0]) {
             throw {
@@ -60,9 +60,9 @@ const getOneItem = async (table, param) => {
  * @description Construye con ayudas de otros métodos una consulta
  *  con condiciones que nos vale para cualquier tabla y cualquier condicion simple
  */
-const findItems = async (table, params) => {
+const findItems = async (table, params, deleted=false) => {
 
-    const condition = `SELECT * FROM ${table} WHERE  ` + whereConstructor(params)
+    const condition = `SELECT * FROM ${table} WHERE  ${whereConstructor(params)} AND deleted =${deleted}`   
     const question = await connection.query(condition, Object.values(params))
     return question[0]
 }
@@ -199,6 +199,9 @@ const getKeyOperator = (key) => {
     return keyOperator
 
 }
+
+
+
 
 module.exports = {
     getAllItems,
