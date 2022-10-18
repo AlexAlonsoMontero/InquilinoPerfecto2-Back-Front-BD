@@ -9,7 +9,6 @@ const table = "usuarios"
 const getAllUsers = async (request, response) => {
     try {
         const users = await userService.getAllUsers();
-        sendRegisterMail();
         response
             .status(200)
             .send({
@@ -140,7 +139,6 @@ const updateUser = async (request, response) => {
                 info: "Usuario actualizado"
             })
     } catch (error) {
-
         response
             .status(error?.status || 500)
             .send({
@@ -151,6 +149,29 @@ const updateUser = async (request, response) => {
     }
 }
 
+const activateUser = async (request, response) => {
+    try {
+        const { id_usuario, activated_code } = request.params
+        await userService.activatedUser(id_usuario, activated_code);
+        response
+            .status(200)
+            .send({
+                status: "OK",
+                info: "Usuario activado"
+            })
+    } catch (error) {
+        response
+            .status(error?.status || 500)
+            .send({
+                status: "FAILED",
+                info: { error: error?.message || 'No se ha podido actualizar el usuario' },
+                code: error?.status || 500
+            })
+    }
+}
+
+
+
 module.exports = {
     getAllUsers,
     getOneUser,
@@ -158,4 +179,5 @@ module.exports = {
     login,
     deleteUser,
     updateUser,
+    activateUser
 }

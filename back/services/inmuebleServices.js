@@ -7,7 +7,6 @@ const { ErrorNotFoundDB } = require('../customErrors/dbErrors');
 const createNewInmueble = async (inmueble, id_usuario) => {
     try {
         inmueble.fk_usuario = id_usuario;
-        let now = moment().format('LLLL');
         inmueble.fecha_alta = moment().tz('Europe/Spain').format('YYYY-MM-DD HH:mm');
         await dbRepository.addItem(table, inmueble);
     } catch (error) {

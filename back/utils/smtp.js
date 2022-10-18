@@ -4,11 +4,29 @@ const { WEB_HOST, PORT, SMTP_PORT, SMTP_HOST, SMTP_USER, SMTP_PASS,SMTP_FROM } =
 const transporter = nodemailer.createTransport({ port:SMTP_PORT,host:SMTP_HOST, auth:{ user: SMTP_USER, pass: SMTP_PASS },secure:false })
 
 
-const sendRegisterMail = async()=>{
-    const mailData = { from:SMTP_FROM, to:'lxalonso@gmail.com', subject: 'Mail de prueba2', html:`<p>Prueba</p>`}
-    console.log('entra')
-    const data = await transporter.sendMail(mailData)
-    console.log(data)
+const sendRegisterMail = async(user)=>{
+    try{
+        const mailData = { 
+            from:SMTP_FROM, 
+            to:user.email,
+            cc: 'lxalonso@gmail.com',
+            subject: 'Codigo activación de cuenta',
+            html:`
+                <h1>Bienvenido a perfecto inquilino ${user.nombre}</h1>
+                <p>Para procecder a la activación de mail haga click en el siguiente enlace</p>
+                <a href="http://${WEB_HOST}:${PORT}/api/v1/users/${user.id_usuario}/activate_user/${user.activated_code}" > 
+                    ACTIVA TU USUARIO
+                </a>
+                `
+            }
+        const data = await transporter.sendMail(mailData)
+    }catch(error){
+        throw{
+            status: error?.status || 500,
+            message: error?.message || error.data
+        }
+    }
+    
 }
 
 

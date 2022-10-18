@@ -48,7 +48,7 @@ router
         userController.deleteUser
     )
     .get('/find', userController.getOneUser)
-    .get('activate_user/:activate_code')
+    .get('/:id_usuario/activate_user/:activated_code', userController.activateUser)
 
 
 module.exports = router

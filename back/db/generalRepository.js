@@ -110,7 +110,7 @@ const updateItem = async (table, conditionParams, updateParams) => {
     if(result[0].affectedRows === 0){
         throw {
             status: 400,
-            data: `No se ha podido borrar en ${table}, no se ha localizado el registro`
+            data: `No se ha podido actualizar en ${table}, no se ha localizado el registro`
         }
     }
     return (result[0])
