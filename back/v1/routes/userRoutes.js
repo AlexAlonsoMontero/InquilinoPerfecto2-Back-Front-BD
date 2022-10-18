@@ -48,6 +48,7 @@ router
         userController.deleteUser
     )
     .get('/find', userController.getOneUser)
+    .get('activate_user/:activate_code')
 
 
 module.exports = router
