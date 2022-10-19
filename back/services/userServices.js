@@ -74,7 +74,6 @@ const login = async (user) => {
 
 
     } catch (error) {
-        console.log(error)
         throw {
             status: error.status,
             message: error?.message || 'Error en la validación del password al hacer login'
