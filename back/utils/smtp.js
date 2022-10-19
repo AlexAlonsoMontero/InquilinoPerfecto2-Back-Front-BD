@@ -29,7 +29,30 @@ const sendRegisterMail = async(user)=>{
     
 }
 
+const sendChangePasswordAlert = async(user)=>{
+    try{
+        const mailData = { 
+            from:SMTP_FROM, 
+            to:user.email,
+            cc: 'lxalonso@gmail.com',
+            subject: 'Password cambiado',
+            html:`
+                <h1>Hola ${user.nombre}</h1>
+                <p>Queremos notificarte que tu password de Perfecto Inquilino,ha sido modificado, si no has sido tu ponte en contacto con el administrador de la página web</p>
+                `
+            }
+        const data = await transporter.sendMail(mailData)
+        console.log(data)
+    }catch(error){
+        throw{
+            status: error?.status || 500,
+            message: error?.message || error.data
+        }
+    }
+    
+}
 
 module.exports = {
-    sendRegisterMail
+    sendRegisterMail,
+    sendChangePasswordAlert
 }

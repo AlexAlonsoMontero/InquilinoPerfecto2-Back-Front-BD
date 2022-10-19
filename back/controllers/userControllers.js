@@ -92,7 +92,7 @@ const login = async (request, response) => {
             .status(error?.status || 500)
             .send({
                 status: "FAILED",
-                message: { error: error?.message || 'Error en el login.' },
+                message: error?.message || 'Error en el login.' ,
                 code: error?.status || 500
             })
     }
@@ -170,7 +170,25 @@ const activateUser = async (request, response) => {
     }
 }
 
-
+const changePassword = async (request, response)=>{
+    try {
+        await userService.changePassword(request.params, request.body),
+        response
+            .status(200)
+            .send({
+                status: "OK",
+                info: "password actualizado"
+            })
+    } catch (error) {
+        response
+            .status(error?.status || 500)
+            .send({
+                status: "FAILED",
+                info: { error: error?.message || 'No se ha podido actualizar el usuario' },
+                code: error?.status || 500
+            })
+    }
+}
 
 module.exports = {
     getAllUsers,
@@ -179,5 +197,6 @@ module.exports = {
     login,
     deleteUser,
     updateUser,
-    activateUser
+    activateUser,
+    changePassword
 }

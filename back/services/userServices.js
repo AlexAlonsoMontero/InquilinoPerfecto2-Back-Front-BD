@@ -2,8 +2,9 @@ const dbRepository = require('../db/generalRepository');
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcrypt');
 const generateRandomString = require('../helpers/generateRandomCode');
-const { sendRegisterMail } = require('../utils/smtp');
+const { sendRegisterMail, sendChangePasswordAlert } = require('../utils/smtp');
 const moment = require('moment-timezone');
+const { verificatePassword } = require('../helpers/verificatePassword');
 
 const table = 'usuarios';
 
@@ -32,7 +33,7 @@ const getOneUser = async (searchParams) => {
 
 const createNewUser = async (newUserData) => {
     try {
-        const codePassword = await bcrypt.hash(newUserData.password, 10);
+        const codePassword = await bcrypt.hash(newUserData.password, parseInt(process.env.BCRYPT_CODIFICATION));
         const activated_code = generateRandomString(9)
         const newUser = {
             ...newUserData,
@@ -42,7 +43,6 @@ const createNewUser = async (newUserData) => {
 
         await dbRepository.addItem(table, newUser);
         const dbUser = await getOneUser({username: newUser.username})
-        console.log(dbUser)
         sendRegisterMail(dbUser)
         return dbUser;
     } catch (error) {
@@ -65,13 +65,7 @@ const login = async (user) => {
         if (dbUser.deleted){
             throw new Error ('Usuario dado de baja')
         }
-        const result = await bcrypt.compare(user.password, dbUser.password)
-        if (!result) {
-            throw {
-                status: 401,
-                message: 'El password no coincide'
-            }
-        }
+        await verificatePassword(dbUser.password, user.password)
         const token = generateToken(dbUser)
         return {
             token,
@@ -80,10 +74,10 @@ const login = async (user) => {
 
 
     } catch (error) {
-
+        console.log(error)
         throw {
             status: error.status,
-            message: error?.message || error
+            message: error?.message || 'Error en la validación del password al hacer login'
         }
     }
 
@@ -103,7 +97,6 @@ const deleteUser = async (id_usuario) => {
 
 const updateUser = async(id_usuario, updateUserParams) =>{
     try {
-        console.log(id_usuario)
         await dbRepository.updateItem(table,id_usuario,updateUserParams)
         
     } catch (error) {
@@ -130,6 +123,25 @@ const activatedUser = async( id_usuario, activated_code) =>{
         }
     }
 }
+
+const changePassword = async(id_usuario, passwords)=>{
+    try {
+        const {password, newPassword} = passwords
+        const newCryptPassword = await bcrypt.hash(passwords.newPassword, parseInt(process.env.BCRYPT_CODIFICATION))
+        const dbUser = await dbRepository.getOneItem(table, id_usuario)
+        await verificatePassword(dbUser.password, password);
+        await dbRepository.updateItem(table, id_usuario, {password: newCryptPassword})
+        await sendChangePasswordAlert(dbUser)
+    } catch (error) {
+        throw {
+            status: error.status,
+            message: error?.data || error
+        }
+    }
+
+
+}
+
 
 
 // /**
@@ -159,5 +171,6 @@ module.exports = {
     login,
     deleteUser,
     updateUser,
-    activatedUser
+    activatedUser,
+    changePassword
 }

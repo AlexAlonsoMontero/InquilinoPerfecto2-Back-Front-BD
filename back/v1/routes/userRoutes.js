@@ -14,7 +14,8 @@ router
     .get('/:id_usuario', userController.getOneUser)
     .post('/',
         [
-            check('username', 'El nombre de usuario es obligatorio').notEmpty(),
+            check('username', 'El nombre de usuario es obligatorio y la longitud mínima es de 6 caracteres').isLength({ min: 6 }).notEmpty(),
+            check('password', 'Longitud mínima del password 6').isLength({ min: 6 }).notEmpty(),
             check('email').isEmail(),
             check('tipo').custom(customValidations.validateUserTipo),
             check('avatar').notEmpty(),
@@ -28,27 +29,34 @@ router
             oneOf([
                 check('username')
                     .isString().notEmpty()
-                    .isLength({ min: 3 })
-                    .withMessage('Invalid username')
+                    .isLength({ min: 6 })
+                    .withMessage('Invalid El nombre de usuario es obligatorio y la longitud mínima es de 6 caracteres')
                     .bail()
                 ,
                 check('email', 'Please enter a valid e-mail!')
                     .isEmail().notEmpty().bail()
             ], 'Nombre de usuario o email incorrectos')
+            , check('password', 'Longitud mínima del password 6').isLength({ min: 6 }).notEmpty()
+
             , validarCampos
-        ]
-        , userController.login)
-    .put('/:id_usuario', 
+        ],
+
+        userController.login)
+    .put('/:id_usuario',
         validateToken,
         userController.updateUser
     )
-    .delete('/:id_usuario', 
+    .delete('/:id_usuario',
         validateToken,
         validateUser.validateAdministrador,
         userController.deleteUser
     )
     .get('/find', userController.getOneUser)
-    .get('/:id_usuario/activate_user/:activated_code', userController.activateUser)
+    .get('/:id_usuario/activate-user/:activated_code', userController.activateUser)
+    .put('/:id_usuario/change-password',
+        validateToken,
+        userController.changePassword
+    )
 
 
 module.exports = router

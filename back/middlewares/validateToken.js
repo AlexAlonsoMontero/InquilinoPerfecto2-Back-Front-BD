@@ -40,6 +40,7 @@ const validateToken = (request, response, next) => {
         }
         response.status(403).send({
             status: "FAILED",
+            info: "Token inválido o inexistente",
             message: sendMessage,
         })
     }
