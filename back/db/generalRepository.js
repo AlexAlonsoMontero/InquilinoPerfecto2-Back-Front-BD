@@ -99,6 +99,7 @@ const addItem = async (table, object) => {
  * @returns {object}
  */
 const updateItem = async (table, conditionParams, updateParams) => {
+    console.log(table, conditionParams, updateParams)
     let sentence = `UPDATE  ${table} SET `
     const numParams = Object.keys(updateParams).length
     for (let i = 0; i < numParams; i++) {
@@ -110,7 +111,7 @@ const updateItem = async (table, conditionParams, updateParams) => {
     if(result[0].affectedRows === 0){
         throw {
             status: 400,
-            data: `No se ha podido borrar en ${table}, no se ha localizado el registro`
+            data: `No se ha podido actualizar en ${table}, no se ha localizado el registro`
         }
     }
     return (result[0])

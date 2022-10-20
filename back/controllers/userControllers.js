@@ -1,4 +1,5 @@
 const userService = require('../services/userServices');
+const { sendRegisterMail } = require('../utils/smtp');
 //TODO revisar seguridad, no devolver contraseña
 //TODO revisar funcionalidad cambiar contraseña
 //TODO crear método no visibles, borrar de la base de datos sólo lo puede hacer el administrador
@@ -91,7 +92,7 @@ const login = async (request, response) => {
             .status(error?.status || 500)
             .send({
                 status: "FAILED",
-                message: { error: error?.message || 'Error en el login.' },
+                message: error?.message || 'Error en el login.' ,
                 code: error?.status || 500
             })
     }
@@ -138,7 +139,47 @@ const updateUser = async (request, response) => {
                 info: "Usuario actualizado"
             })
     } catch (error) {
+        response
+            .status(error?.status || 500)
+            .send({
+                status: "FAILED",
+                info: { error: error?.message || 'No se ha podido actualizar el usuario' },
+                code: error?.status || 500
+            })
+    }
+}
 
+const activateUser = async (request, response) => {
+    try {
+        const { id_usuario, activated_code } = request.params
+        await userService.activatedUser(id_usuario, activated_code);
+        response
+            .status(200)
+            .send({
+                status: "OK",
+                info: "Usuario activado"
+            })
+    } catch (error) {
+        response
+            .status(error?.status || 500)
+            .send({
+                status: "FAILED",
+                info: { error: error?.message || 'No se ha podido actualizar el usuario' },
+                code: error?.status || 500
+            })
+    }
+}
+
+const changePassword = async (request, response)=>{
+    try {
+        await userService.changePassword(request.params, request.body),
+        response
+            .status(200)
+            .send({
+                status: "OK",
+                info: "password actualizado"
+            })
+    } catch (error) {
         response
             .status(error?.status || 500)
             .send({
@@ -156,4 +197,6 @@ module.exports = {
     login,
     deleteUser,
     updateUser,
+    activateUser,
+    changePassword
 }

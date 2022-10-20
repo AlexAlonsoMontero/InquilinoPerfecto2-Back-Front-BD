@@ -48,7 +48,6 @@ const getAllInmuebles = async( request, response )=>{
 
 const getOneInmueble = async( request, response )=>{
     try {
-        console.log(request.params)
         const inmueble = await inmuebleService.getOneInmueble(request.params);
         response
             .status(200)
