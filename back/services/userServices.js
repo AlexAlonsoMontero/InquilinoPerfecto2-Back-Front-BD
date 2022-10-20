@@ -40,12 +40,21 @@ const createNewUser = async (newUserData) => {
             activated_code: activated_code,
             password: codePassword
         }
-        const previousUser = await dbRepository.findItems(table,{username:newUser.username});
-        console.log(previousUser)
-        await dbRepository.addItem(table, newUser);
-        const dbUser = await getOneUser({username: newUser.username})
-        sendRegisterMail(dbUser)
-        return dbUser;
+        const previousUser = await dbRepository.getOneItem(table, { email: newUser.email }, true);
+        
+        if (previousUser.deleted ) {
+            await sendRegisterMail(previousUser)
+            console.log('entra')
+            return { dbUser: previousUser, info: "Usuario dado de baja anteriormente, enviado correo de verificación" }
+        } else {
+
+            await dbRepository.addItem(table, newUser);
+            const dbUser = await getOneUser({ username: newUser.username })
+            const info = { info: 'Usuario dado de alta con exito' }
+            sendRegisterMail(dbUser)
+            return { dbUser, info };
+        }
+
     } catch (error) {
         throw {
             status: error?.status || 500,
@@ -59,18 +68,18 @@ const createNewUser = async (newUserData) => {
 const login = async (user) => {
     try {
         const dbUser = await dbRepository.getOneItem(table, user);
-        if (dbUser.activated_at === null ){
+        if (dbUser.activated_at === null) {
             await sendRegisterMail(dbUser);
-            throw new Error ('Usuario no activado, reenviado mail de activación');
+            throw new Error('Usuario no activado, reenviado mail de activación');
         }
-        if (dbUser.deleted){
-            throw new Error ('Usuario dado de baja')
+        if (dbUser.deleted) {
+            throw new Error('Usuario dado de baja')
         }
         await verificatePassword(dbUser.password, user.password)
         const token = generateToken(dbUser)
         return {
             token,
-            user:dbUser
+            user: dbUser
         }
 
 
@@ -95,10 +104,10 @@ const deleteUser = async (id_usuario) => {
     }
 }
 
-const updateUser = async(id_usuario, updateUserParams) =>{
+const updateUser = async (id_usuario, updateUserParams) => {
     try {
-        await dbRepository.updateItem(table,id_usuario,updateUserParams)
-        
+        await dbRepository.updateItem(table, id_usuario, updateUserParams)
+
     } catch (error) {
         throw {
             status: error.status,
@@ -107,15 +116,15 @@ const updateUser = async(id_usuario, updateUserParams) =>{
     }
 }
 
-const activatedUser = async( id_usuario, activated_code) =>{
+const activatedUser = async (id_usuario, activated_code) => {
     try {
         const userParams = {
             id_usuario: id_usuario,
             activated_code: activated_code
         }
-        const user  = await getOneUser(userParams);
-        const updatedUser = await updateUser({id_usuario: userParams.id_usuario}, {activated_at: moment().tz('Europe/Spain').format('YYYY-MM-DD HH:mm'), deleted: false});
-        
+        const user = await getOneUser(userParams);
+        const updatedUser = await updateUser({ id_usuario: userParams.id_usuario }, { activated_at: moment().tz('Europe/Spain').format('YYYY-MM-DD HH:mm'), deleted: false });
+
     } catch (error) {
         throw {
             status: error.status,
@@ -124,13 +133,13 @@ const activatedUser = async( id_usuario, activated_code) =>{
     }
 }
 
-const changePassword = async(id_usuario, passwords)=>{
+const changePassword = async (id_usuario, passwords) => {
     try {
-        const {password, newPassword} = passwords
+        const { password, newPassword } = passwords
         const newCryptPassword = await bcrypt.hash(passwords.newPassword, parseInt(process.env.BCRYPT_CODIFICATION))
         const dbUser = await dbRepository.getOneItem(table, id_usuario)
         await verificatePassword(dbUser.password, password);
-        await dbRepository.updateItem(table, id_usuario, {password: newCryptPassword})
+        await dbRepository.updateItem(table, id_usuario, { password: newCryptPassword })
         await sendChangePasswordAlert(dbUser)
     } catch (error) {
         throw {
@@ -152,9 +161,9 @@ const changePassword = async(id_usuario, passwords)=>{
 //  * @returns {string} Devuelve el token generado
 //  */
 const generateToken = (dbUser) => {
-    const tokenPayLoad = { id_usuario ,username, email, tipo } = dbUser
+    const tokenPayLoad = { id_usuario, username, email, tipo } = dbUser
     const token = jwt.sign(
-        {...tokenPayLoad},
+        { ...tokenPayLoad },
         process.env.TOKEN_SECRET,
         { expiresIn: '30d' }
     )

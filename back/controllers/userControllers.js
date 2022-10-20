@@ -45,12 +45,13 @@ const getOneUser = async (request, response) => {
 
 const createNewUser = async (request, response) => {
     try {
-        const newUser = await userService.createNewUser(request.body);
+        const { dbUser } = await userService.createNewUser(request.body);
+
         response
             .status(200)
             .send({
                 status: "OK",
-                newUser
+                user: dbUser
             })
     } catch (error) {
         response

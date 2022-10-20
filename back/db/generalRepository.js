@@ -11,7 +11,7 @@ const connection = getConnection()
  * @description Devuelve todos los datos que existan en la tabla pasada
  * como parametro table
  */
-const getAllItems = async (table, deleted= false) => {
+const getAllItems = async (table, deleted = false) => {
     try {
         const question = await connection.query(`SELECT * FROM ${table} WHERE deleted = ${deleted}`)
         return question[0]
@@ -30,7 +30,7 @@ const getAllItems = async (table, deleted= false) => {
  * @description Devuelve todos los datos que existan en la tabla pasada
  * como parametro table, y que concuerden con el objeto paado enel parametro param
  */
-const getOneItem = async (table, param, deleted=false) => {
+const getOneItem = async (table, param, deleted = false) => {
     try {
         const condition = `SELECT * FROM ${table} WHERE ${Object.keys(param)[0]} = ? AND deleted=${deleted}`;
         const result = await connection.query(condition, Object.values(param)[0]);
@@ -60,14 +60,18 @@ const getOneItem = async (table, param, deleted=false) => {
  * @description Construye con ayudas de otros métodos una consulta
  *  con condiciones que nos vale para cualquier tabla y cualquier condicion simple
  */
-const findItems = async (table, params, deleted=false) => {
-
-    const condition = `SELECT * FROM ${table} WHERE  ${whereConstructor(params)} AND deleted =${deleted}`   
-    const question = await connection.query(condition, Object.values(params))
-    return question[0]
+const findItems = async (table, params, deleted = false) => {
+    try {
+        const condition = `SELECT * FROM ${table} WHERE  ${whereConstructor(params)} AND deleted =${deleted}`
+        const question = await connection.query(condition, Object.values(params))
+        return question[0]
+    } catch (error) {
+        throw {
+            status: 500,
+            message: error?.message || error
+        }
+    }
 }
-
-
 
 /**
  *
@@ -80,8 +84,8 @@ const addItem = async (table, object) => {
         const values = Object.values(object).map(val => (typeof (val) === 'string' ? val = `'${val}'` : val))
         const sentence = `INSERT INTO ${table} (${Object.keys(object)}) VALUES (${values})`
         await connection.query(sentence)
+        return true
     } catch (error) {
-
         throw {
             status: 500,
             message: error?.message || error
@@ -107,7 +111,7 @@ const updateItem = async (table, conditionParams, updateParams) => {
     }
     sentence += `WHERE ${whereConstructor(conditionParams)}`;
     const result = await connection.query(sentence, [...Object.values(updateParams), ...Object.values(conditionParams)])
-    if(result[0].affectedRows === 0){
+    if (result[0].affectedRows === 0) {
         throw {
             status: 400,
             data: `No se ha podido actualizar en ${table}, no se ha localizado el registro`
@@ -128,14 +132,14 @@ const deleteItem = async (table, object) => {
     try {
         const sentence = `DELETE FROM ${table} WHERE ${Object.keys(object)[0]} = ?`
         const result = await connection.query(sentence, Object.values(object))
-        if(result[0].affectedRows ===0){
+        if (result[0].affectedRows === 0) {
             throw {
                 status: 400,
                 data: `No se ha podido actualizar en ${table}, no se ha localizado el registro`
             }
         };
     } catch (error) {
-        
+
         throw {
             status: 500,
             message: error?.data || error.message || 'Error en la conexion con la base de datos'

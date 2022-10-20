@@ -6,6 +6,7 @@ const transporter = nodemailer.createTransport({ port:SMTP_PORT,host:SMTP_HOST, 
 
 const sendRegisterMail = async(user)=>{
     try{
+        console.log(user)
         const mailData = { 
             from:SMTP_FROM, 
             to:user.email,
