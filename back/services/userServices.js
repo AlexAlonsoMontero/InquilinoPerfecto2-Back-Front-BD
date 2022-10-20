@@ -21,7 +21,7 @@ const getAllUsers = async () => {
 
 const getOneUser = async (searchParams) => {
     try {
-        const result = await dbRepository.getOneItem(table, searchParams)
+        const result = await dbRepository.getOneItemNoFilterDelete(table, searchParams)
         return result
     } catch (error) {
         throw {
@@ -44,8 +44,10 @@ const createNewUser = async (newUserData) => {
         
         if (previousUser.deleted ) {
             await sendRegisterMail(previousUser)
-            console.log('entra')
-            return { dbUser: previousUser, info: "Usuario dado de baja anteriormente, enviado correo de verificación" }
+            throw {
+                status:500,
+                message: "Usuario dado de alta anteriormente, Enviado mail para reactivación"
+            }
         } else {
 
             await dbRepository.addItem(table, newUser);
@@ -123,6 +125,7 @@ const activatedUser = async (id_usuario, activated_code) => {
             activated_code: activated_code
         }
         const user = await getOneUser(userParams);
+        console.log(user)
         const updatedUser = await updateUser({ id_usuario: userParams.id_usuario }, { activated_at: moment().tz('Europe/Spain').format('YYYY-MM-DD HH:mm'), deleted: false });
 
     } catch (error) {

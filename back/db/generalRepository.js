@@ -50,7 +50,26 @@ const getOneItem = async (table, param, deleted = false) => {
         }
     }
 }
+const getOneItemNoFilterDelete = async (table, param) => {
+    try {
+        const condition = `SELECT * FROM ${table} WHERE ${Object.keys(param)[0]}`;
+        const result = await connection.query(condition, Object.values(param)[0]);
+        if (!result[0][0]) {
+            throw {
+                status: 400,
+                data: `No se ha localizado ningún dato en ${table}`
+            }
+        }
+        return result[0][0]
 
+
+    } catch (error) {
+        throw {
+            status: error?.status || 500,
+            data: error?.data || error
+        }
+    }
+}
 /**
  *
  * @param {string} table
@@ -210,6 +229,7 @@ const getKeyOperator = (key) => {
 module.exports = {
     getAllItems,
     getOneItem,
+    getOneItemNoFilterDelete,
     findItems,
     addItem,
     deleteItem,

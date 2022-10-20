@@ -15,12 +15,13 @@ const sendRegisterMail = async(user)=>{
             html:`
                 <h1>Bienvenido a perfecto inquilino ${user.nombre}</h1>
                 <p>Para procecder a la activación de mail haga click en el siguiente enlace</p>
-                <a href="http://${WEB_HOST}:${PORT}/api/v1/users/${user.id_usuario}/activate_user/${user.activated_code}" > 
+                <a href="http://${WEB_HOST}:${PORT}/api/v1/users/${user.id_usuario}/activate-user/${user.activated_code}" > 
                     ACTIVA TU USUARIO
                 </a>
                 `
             }
         const data = await transporter.sendMail(mailData)
+        console.log(data)
     }catch(error){
         throw{
             status: error?.status || 500,
