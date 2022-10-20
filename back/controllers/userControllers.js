@@ -1,9 +1,4 @@
 const userService = require('../services/userServices');
-const { sendRegisterMail } = require('../utils/smtp');
-//TODO revisar seguridad, no devolver contraseña
-//TODO revisar funcionalidad cambiar contraseña
-//TODO crear método no visibles, borrar de la base de datos sólo lo puede hacer el administrador
-const table = "usuarios"
 
 
 const getAllUsers = async (request, response) => {
@@ -189,6 +184,22 @@ const changePassword = async (request, response)=>{
             })
     }
 }
+
+const deactivateUser = async (request, response) =>{
+    try {
+        
+    } catch (error) {
+        response
+            .status(error?.status || 500)
+            .send({
+                status: "FAILED",
+                info: { error: error?.message || 'No se ha podido actualizar el usuario' },
+                code: error?.status || 500
+            })
+    }
+}
+
+
 
 module.exports = {
     getAllUsers,

@@ -42,7 +42,6 @@ const sendChangePasswordAlert = async(user)=>{
                 `
             }
         const data = await transporter.sendMail(mailData)
-        console.log(data)
     }catch(error){
         throw{
             status: error?.status || 500,

@@ -28,3 +28,6 @@ const port = process.env.PORT
 app.listen(port,()=>{
     console.log(`Server runing at port ${port}`)
 });
+
+
+//TODO cuando se da de baja ( deleted true, un usuario poner deleted tu todos los inmuebles y anuncios)

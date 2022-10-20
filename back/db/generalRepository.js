@@ -99,7 +99,6 @@ const addItem = async (table, object) => {
  * @returns {object}
  */
 const updateItem = async (table, conditionParams, updateParams) => {
-    console.log(table, conditionParams, updateParams)
     let sentence = `UPDATE  ${table} SET `
     const numParams = Object.keys(updateParams).length
     for (let i = 0; i < numParams; i++) {

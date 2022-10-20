@@ -30,7 +30,7 @@ const getOneUser = async (searchParams) => {
         }
     }
 }
-
+// Creamos usuario nuevo, en caso de que exista y este dado de baja enviamos mail de reactivación.
 const createNewUser = async (newUserData) => {
     try {
         const codePassword = await bcrypt.hash(newUserData.password, parseInt(process.env.BCRYPT_CODIFICATION));
@@ -40,7 +40,8 @@ const createNewUser = async (newUserData) => {
             activated_code: activated_code,
             password: codePassword
         }
-
+        const previousUser = await dbRepository.findItems(table,{username:newUser.username});
+        console.log(previousUser)
         await dbRepository.addItem(table, newUser);
         const dbUser = await getOneUser({username: newUser.username})
         sendRegisterMail(dbUser)
@@ -113,7 +114,7 @@ const activatedUser = async( id_usuario, activated_code) =>{
             activated_code: activated_code
         }
         const user  = await getOneUser(userParams);
-        const updatedUser = await updateUser({id_usuario: userParams.id_usuario}, {activated_at: moment().tz('Europe/Spain').format('YYYY-MM-DD HH:mm')});
+        const updatedUser = await updateUser({id_usuario: userParams.id_usuario}, {activated_at: moment().tz('Europe/Spain').format('YYYY-MM-DD HH:mm'), deleted: false});
         
     } catch (error) {
         throw {
