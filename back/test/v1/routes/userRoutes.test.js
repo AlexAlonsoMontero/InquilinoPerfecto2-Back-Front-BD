@@ -3,6 +3,7 @@ const request = require('supertest');
 const { deleteAllItems } = require('../../../db/generalRepository');
 const expect = require("chai").expect;
 const { getAllUsers } = require('../../../services/userServices');
+const { app } = require('../../../index')
 
 describe("Tests para las rutas de user", () => {
     const table = 'usuarios';
