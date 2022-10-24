@@ -21,7 +21,7 @@ const getAllUsers = async () => {
 
 const getOneUser = async (searchParams) => {
     try {
-        const result = await dbRepository.getOneItemNoFilterDelete(table, searchParams)
+        const result = await dbRepository.getOneItemNoFilterDelete(table, searchParams);
         return result
     } catch (error) {
         throw {
@@ -40,22 +40,13 @@ const createNewUser = async (newUserData) => {
             activated_code: activated_code,
             password: codePassword
         }
-        const previousUser = await dbRepository.getOneItem(table, { email: newUser.email }, true);
-        
-        if (previousUser.deleted ) {
-            await sendRegisterMail(previousUser)
-            throw {
-                status:500,
-                message: "Usuario dado de alta anteriormente, Enviado mail para reactivación"
-            }
-        } else {
+        await dbRepository.addItem(table, newUser);
+        const dbUser = await getOneUser({ username: newUser.username })
 
-            await dbRepository.addItem(table, newUser);
-            const dbUser = await getOneUser({ username: newUser.username })
-            const info = { info: 'Usuario dado de alta con exito' }
-            sendRegisterMail(dbUser)
-            return { dbUser, info };
-        }
+        const info = { info: 'Usuario dado de alta con exito' }
+        if(process.env.NODE_ENV != 'test') sendRegisterMail(dbUser)
+        return { dbUser, info };
+
 
     } catch (error) {
         throw {
@@ -69,15 +60,18 @@ const createNewUser = async (newUserData) => {
 
 const login = async (user) => {
     try {
-        const dbUser = await dbRepository.getOneItem(table, user);
+        const dbUser = await dbRepository.getOneItemNoFilterDelete(table, user);
         if (dbUser.activated_at === null) {
             await sendRegisterMail(dbUser);
             throw new Error('Usuario no activado, reenviado mail de activación');
         }
+        
+        await verificatePassword(dbUser.password, user.password)
+        //Una vez verificado password, si el usuario ha sido dado de baja, enviamos mail
         if (dbUser.deleted) {
+            await sendRegisterMail(dbUser)
             throw new Error('Usuario dado de baja')
         }
-        await verificatePassword(dbUser.password, user.password)
         const token = generateToken(dbUser)
         return {
             token,
@@ -125,9 +119,7 @@ const activatedUser = async (id_usuario, activated_code) => {
             activated_code: activated_code
         }
         const user = await getOneUser(userParams);
-        console.log(user)
         const updatedUser = await updateUser({ id_usuario: userParams.id_usuario }, { activated_at: moment().tz('Europe/Spain').format('YYYY-MM-DD HH:mm'), deleted: false });
-
     } catch (error) {
         throw {
             status: error.status,

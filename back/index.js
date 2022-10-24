@@ -18,16 +18,13 @@ app.use('/api/v1/users', userRouterV1);
 app.use('/api/v1/inmuebles', inmuebleUserV1);
 
 
-//PRUEBAS
-// const endpointPrueba  = '/prueba'
-// app.post(endpointPrueba,validateToken,getAllUsers)
-
-
 
 const port = process.env.PORT
 app.listen(port,()=>{
     console.log(`Server runing at port ${port}`)
 });
 
+
+module.exports = {app};
 
 //TODO cuando se da de baja ( deleted true, un usuario poner deleted tu todos los inmuebles y anuncios)

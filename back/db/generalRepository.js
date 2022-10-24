@@ -52,7 +52,7 @@ const getOneItem = async (table, param, deleted = false) => {
 }
 const getOneItemNoFilterDelete = async (table, param) => {
     try {
-        const condition = `SELECT * FROM ${table} WHERE ${Object.keys(param)[0]}`;
+        const condition = `SELECT * FROM ${table} WHERE ${Object.keys(param)[0]} = ?`;
         const result = await connection.query(condition, Object.values(param)[0]);
         if (!result[0][0]) {
             throw {
@@ -150,13 +150,7 @@ const updateItem = async (table, conditionParams, updateParams) => {
 const deleteItem = async (table, object) => {
     try {
         const sentence = `DELETE FROM ${table} WHERE ${Object.keys(object)[0]} = ?`
-        const result = await connection.query(sentence, Object.values(object))
-        if (result[0].affectedRows === 0) {
-            throw {
-                status: 400,
-                data: `No se ha podido actualizar en ${table}, no se ha localizado el registro`
-            }
-        };
+        const result = await connection.query(sentence, Object.values(object));
     } catch (error) {
 
         throw {
@@ -164,11 +158,22 @@ const deleteItem = async (table, object) => {
             message: error?.data || error.message || 'Error en la conexion con la base de datos'
         }
     }
-
-
-
-
 }
+
+const deleteAllItems =  async (table) => {
+   
+    try {
+        const sentence = `DELETE FROM ${table}`;
+        await connection.query(sentence);
+    } catch (error) {
+
+        throw {
+            status: 500,
+            message: error?.data || error.message || 'Error en la conexion con la base de datos'
+        }
+    }
+}
+
 
 /**
  *
@@ -233,5 +238,6 @@ module.exports = {
     findItems,
     addItem,
     deleteItem,
+    deleteAllItems,
     updateItem,
 }

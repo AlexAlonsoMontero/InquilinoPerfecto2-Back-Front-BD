@@ -6,7 +6,6 @@ const transporter = nodemailer.createTransport({ port:SMTP_PORT,host:SMTP_HOST, 
 
 const sendRegisterMail = async(user)=>{
     try{
-        console.log(user)
         const mailData = { 
             from:SMTP_FROM, 
             to:user.email,
@@ -21,7 +20,6 @@ const sendRegisterMail = async(user)=>{
                 `
             }
         const data = await transporter.sendMail(mailData)
-        console.log(data)
     }catch(error){
         throw{
             status: error?.status || 500,
