@@ -179,7 +179,7 @@ const changePassword = async (request, response) => {
             .status(error?.status || 500)
             .send({
                 status: "FAILED",
-                info: { error: error?.message || 'No se ha podido actualizar el usuario' },
+                info: error?.message || 'No se ha podido actualizar el usuario' ,
                 code: error?.status || 500
             })
     }

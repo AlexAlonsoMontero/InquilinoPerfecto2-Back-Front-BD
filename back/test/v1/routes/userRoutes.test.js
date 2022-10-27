@@ -78,6 +78,7 @@ describe("Tests para las rutas de user", () => {
                 })
                 .auth(token, { type: 'bearer' })
             expect( res.status ).to.equal( 200 );
+           
             expect( res.body.info ).to.equal( 'password actualizado' );
         })
     })

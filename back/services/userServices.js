@@ -135,7 +135,7 @@ const changePassword = async (id_usuario, passwords) => {
         const dbUser = await dbRepository.getOneItem(table, id_usuario)
         await verificatePassword(dbUser.password, password);
         await dbRepository.updateItem(table, id_usuario, { password: newCryptPassword })
-        await sendChangePasswordAlert(dbUser)
+        if (process.env.NODE_ENV !== test ) await sendChangePasswordAlert(dbUser)
     } catch (error) {
         throw {
             status: error.status,
