@@ -30,6 +30,7 @@ const getOneUser = async (request, response) => {
             .status(200)
             .send({
                 status: "OK",
+                info: 'Obtenido usuario con éxito',
                 user
             })
 
@@ -46,7 +47,7 @@ const getOneUser = async (request, response) => {
 const createNewUser = async (request, response) => {
     try {
         const { dbUser, info } = await userService.createNewUser(request.body);
-        
+
 
         response
             .status(200)
@@ -74,15 +75,11 @@ const login = async (request, response) => {
         user.password = request.body.password;
         const { token, user: loggedUser } = await userService.login(user);
 
-
         response.header('auth-token', token).json({
             status: 200,
-            data: {
-                username: loggedUser.username,
-                id_usuario: loggedUser.id_usuario,
-                token
-            }
-
+            username: loggedUser.username,
+            id_usuario: loggedUser.id_usuario,
+            token
 
         })
     } catch (error) {
@@ -90,7 +87,7 @@ const login = async (request, response) => {
             .status(error?.status || 500)
             .send({
                 status: "FAILED",
-                message: error?.message || 'Error en el login.' ,
+                message: error?.message || 'Error en el login.',
                 code: error?.status || 500
             })
     }
@@ -168,15 +165,15 @@ const activateUser = async (request, response) => {
     }
 }
 
-const changePassword = async (request, response)=>{
+const changePassword = async (request, response) => {
     try {
         await userService.changePassword(request.params, request.body),
-        response
-            .status(200)
-            .send({
-                status: "OK",
-                info: "password actualizado"
-            })
+            response
+                .status(200)
+                .send({
+                    status: "OK",
+                    info: "password actualizado"
+                })
     } catch (error) {
         response
             .status(error?.status || 500)
@@ -188,9 +185,9 @@ const changePassword = async (request, response)=>{
     }
 }
 
-const deactivateUser = async (request, response) =>{
+const deactivateUser = async (request, response) => {
     try {
-        
+
     } catch (error) {
         response
             .status(error?.status || 500)

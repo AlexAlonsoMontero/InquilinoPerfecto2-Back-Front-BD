@@ -2,7 +2,7 @@ const { assert } = require('chai');
 const request = require('supertest');
 const { deleteAllItems } = require('../../../db/generalRepository');
 const expect = require("chai").expect;
-const { getAllUsers } = require('../../../services/userServices');
+const { getAllUsers, getOneUser } = require('../../../services/userServices');
 const { app } = require('../../../index')
 
 describe("Tests para las rutas de user", () => {
@@ -43,7 +43,43 @@ describe("Tests para las rutas de user", () => {
 
             }
         })
+    })
 
+    describe('GET /find buscar un usuario --> Find one user', () => {
+        it(' debe devolver status 200, info:Obtenido usuario con éxito y user = a user pedido ', async () => {
+            const res = await request(baseUrl).get(`/find/?username=${users[0].username}&tipo=${users[0].tipo}`);
+            expect(res.status).to.equal(200);
+            expect(res.body.info).to.equal('Obtenido usuario con éxito');
+            expect(res.body.user.username).to.equal(users[0].username)
+        })
+    });
+    describe('LOGIN Y GET /:id_usuario/change-password --> Cambiar el password', () => {
+        let token = '';
+        it('login devolver status 200 verificamos username ', async () => {
+            const res = await request(baseUrl).post('/login')
+                .send({
+                    username: users[0].username,
+                    password: users[0].password
+                });
+
+            expect(res.status).to.equal(200);
+            expect(res.body.username).to.equal(users[0].username);
+            token = res.body.token
+
+
+
+        })
+        it('deve devolver status 200 info = password actualizado', async () => {
+            const dbUser = await getOneUser({ username: users[0].username });
+            const res = await request(baseUrl)
+                .put(`/${dbUser.id_usuario}/change-password`).send({
+                    password: users[0].password,
+                    newPassword: users[0].password + '1'
+                })
+                .auth(token, { type: 'bearer' })
+            expect( res.status ).to.equal( 200 );
+            expect( res.body.info ).to.equal( 'password actualizado' );
+        })
     })
 
 
