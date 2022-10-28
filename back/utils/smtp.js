@@ -23,7 +23,7 @@ const sendRegisterMail = async(user)=>{
     }catch(error){
         throw{
             status: error?.status || 500,
-            message: error?.message || error.data
+            message: error?.message || 'No se ha podido enviar el correod de activación de usuario'
         }
     }
     
@@ -45,7 +45,7 @@ const sendChangePasswordAlert = async(user)=>{
     }catch(error){
         throw{
             status: error?.status || 500,
-            message: error?.message || error.data
+            message: error?.message || 'No se ha podido enviar el correo de cambio de password' 
         }
     }
     

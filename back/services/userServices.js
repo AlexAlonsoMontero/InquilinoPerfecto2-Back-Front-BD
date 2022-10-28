@@ -130,16 +130,18 @@ const activatedUser = async (id_usuario, activated_code) => {
 
 const changePassword = async (id_usuario, passwords) => {
     try {
-        const { password, newPassword } = passwords
-        const newCryptPassword = await bcrypt.hash(passwords.newPassword, parseInt(process.env.BCRYPT_CODIFICATION))
+        const { password  } = passwords
+        const newCryptPassword = await bcrypt.hash(passwords.newPassword, parseInt(process.env.BCRYPT_CODIFICATION));
         const dbUser = await dbRepository.getOneItem(table, id_usuario)
-        await verificatePassword(dbUser.password, password);
-        await dbRepository.updateItem(table, id_usuario, { password: newCryptPassword })
-        if (process.env.NODE_ENV !== test ) await sendChangePasswordAlert(dbUser)
+   
+        const result1 = await verificatePassword(dbUser.password, password);
+        const result  = await dbRepository.updateItem(table, id_usuario, { password: newCryptPassword })
+        console.log(process.env.NODE_ENV)
+        if (process.env.NODE_ENV !== 'test' ) {await sendChangePasswordAlert(dbUser)}
     } catch (error) {
         throw {
             status: error.status,
-            message: error?.data || error
+            message: error?.message || error?.data || 'Error al cambiar passwrod en la base de datos'
         }
     }
 
