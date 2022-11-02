@@ -89,11 +89,9 @@ const deleteInmueble = async( request, response )=>{
 
 const updateInmueble = async( request, response)=>{
     try {
-        const {
-            params: id_imueble,
-            body: updateiInmuebleParams
-        } = request
-        await inmuebleService.updateInmueble(id_imueble, updateiInmuebleParams);
+        const { body: updateiInmuebleParams } = request;
+        const  id_inmueble = {id_inmueble: request.params.id_inmueble};
+        await inmuebleService.updateInmueble(id_inmueble, updateiInmuebleParams);
         response
             .status(200)
             .send({

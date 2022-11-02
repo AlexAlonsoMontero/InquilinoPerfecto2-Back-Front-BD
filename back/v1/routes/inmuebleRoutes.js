@@ -36,18 +36,18 @@ router
     .get('/', inmuebleController.getAllInmuebles)
     .get('/:id_inmueble', inmuebleController.getOneInmueble)
     .get('/user/:id_usuario', inmuebleController.getInmueblesByUser)
-    .delete('/:id_inmueble',
+    .delete('/user/:id_usuario/:id_inmueble',
         validateToken,
         validateUser.validateAdministrador,
         inmuebleController.deleteInmueble
     )
-    .put('/:id_inmueble',
-        [
-            check(notNullAtributes).notEmpty().isString(),
-            check(numAtributes).isFloat(),
-            check(booleanAtributes).isBoolean(),
-            validarCampos
-        ],
+    .put('/:id_inmueble/user/:id_usuario',
+        // [
+        //     check(notNullAtributes).notEmpty().isString(),
+        //     check(numAtributes).isFloat(),
+        //     check(booleanAtributes).isBoolean(),
+        //     validarCampos
+        // ],
         validateToken,
         validateUser.validateCasero,
         inmuebleController.updateInmueble
