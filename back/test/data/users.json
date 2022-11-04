@@ -1,0 +1,31 @@
+[{
+        "username": "userPruebas1",
+        "password": "userPruebas1",
+        "email": "userPruebas1@userPruebas1.com",
+        "tipo": "CASERO",
+        "avatar": "userPruebas1",
+        "nombre": "Parralas",
+        "apellidos": "userPruebas19 de todos los santos",
+        "telefono": "670000001"
+    },
+    {
+        "username": "userPruebas2",
+        "password": "userPruebas2",
+        "email": "userPruebas2@userPruebas2.com",
+        "tipo": "INQUILINO",
+        "avatar": "userPruebas2",
+        "nombre": "Parralas",
+        "apellidos": "userPruebas2 de todos los santos",
+        "telefono": "670000002"
+    },
+    {
+        "username": "userPruebas3",
+        "password": "userPruebas3",
+        "email": "userPruebas3@userPruebas3.com",
+        "tipo": "INQUILINO/CASERO",
+        "avatar": "userPruebas3",
+        "nombre": "Parralas",
+        "apellidos": "userPruebas3 de todos los santos",
+        "telefono": "670000003"
+    }
+]

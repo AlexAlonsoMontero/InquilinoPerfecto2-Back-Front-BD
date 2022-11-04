@@ -17,10 +17,10 @@ class ErrorNoParams extends Error {
     }
 }
 class ErrorDuplicateEntry extends Error {
-    constructor(paramExpected){
+    constructor(param){
         super()
-        this.code = 501
-        this.message =`Entrada ${paramExpected.split("'")[1]} ya registrado.`;
+        this.code = 401
+        this.message =`Entrada ${param} duplicado en base de datos.`;
 
     }
 }

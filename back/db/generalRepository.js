@@ -11,7 +11,7 @@ const connection = getConnection()
  * @description Devuelve todos los datos que existan en la tabla pasada
  * como parametro table
  */
-const getAllItems = async (table, deleted= false) => {
+const getAllItems = async (table, deleted = false) => {
     try {
         const question = await connection.query(`SELECT * FROM ${table} WHERE deleted = ${deleted}`)
         return question[0]
@@ -30,7 +30,7 @@ const getAllItems = async (table, deleted= false) => {
  * @description Devuelve todos los datos que existan en la tabla pasada
  * como parametro table, y que concuerden con el objeto paado enel parametro param
  */
-const getOneItem = async (table, param, deleted=false) => {
+const getOneItem = async (table, param, deleted = false) => {
     try {
         const condition = `SELECT * FROM ${table} WHERE ${Object.keys(param)[0]} = ? AND deleted=${deleted}`;
         const result = await connection.query(condition, Object.values(param)[0]);
@@ -50,6 +50,48 @@ const getOneItem = async (table, param, deleted=false) => {
         }
     }
 }
+const getOneItemNoFilterDelete = async (table, param) => {
+    try {
+        const condition = `SELECT * FROM ${table} WHERE ${Object.keys(param)[0]} = ?`;
+        const result = await connection.query(condition, Object.values(param)[0]);
+        if (!result[0][0]) {
+            throw {
+                status: 400,
+                data: `No se ha localizado ningún dato en ${table}`
+            }
+        }
+        return result[0][0]
+
+
+    } catch (error) {
+        throw {
+            status: error?.status || 500,
+            data: error?.data || error
+        }
+    }
+}
+/**
+ *
+ * @param {string} table
+ * @param {object} param Objetos de request.query donde quey es
+ * la clave de búsqueda y los values el valor que buscamos
+ * @param {object} deleted  objeto booleano que indica si ha sido dado de baja o no
+ * @returns {[object]} Devuelve un objeto con los valores localizdos dela base de datos
+ * @description Construye con ayudas de otros métodos una consulta
+ *  con condiciones que nos vale para cualquier tabla y cualquier condicion simple
+ */
+const findItems = async (table, params, deleted = false) => {
+    try {
+        const condition = `SELECT * FROM ${table} WHERE  ${whereConstructor(params)} AND deleted =${deleted}`
+        const question = await connection.query(condition, Object.values(params))
+        return question[0]
+    } catch (error) {
+        throw {
+            status: 500,
+            message: error?.message || error
+        }
+    }
+}
 
 /**
  *
@@ -60,14 +102,18 @@ const getOneItem = async (table, param, deleted=false) => {
  * @description Construye con ayudas de otros métodos una consulta
  *  con condiciones que nos vale para cualquier tabla y cualquier condicion simple
  */
-const findItems = async (table, params, deleted=false) => {
-
-    const condition = `SELECT * FROM ${table} WHERE  ${whereConstructor(params)} AND deleted =${deleted}`   
-    const question = await connection.query(condition, Object.values(params))
-    return question[0]
+const findItemsNoFilterDelete = async (table, params) => {
+    try {
+        const condition = `SELECT * FROM ${table} WHERE  ${whereConstructor(params)}`
+        const question = await connection.query(condition, Object.values(params))
+        return question[0]
+    } catch (error) {
+        throw {
+            status: 500,
+            message: error?.message || error
+        }
+    }
 }
-
-
 
 /**
  *
@@ -80,8 +126,8 @@ const addItem = async (table, object) => {
         const values = Object.values(object).map(val => (typeof (val) === 'string' ? val = `'${val}'` : val))
         const sentence = `INSERT INTO ${table} (${Object.keys(object)}) VALUES (${values})`
         await connection.query(sentence)
+        return true
     } catch (error) {
-
         throw {
             status: 500,
             message: error?.message || error
@@ -99,7 +145,6 @@ const addItem = async (table, object) => {
  * @returns {object}
  */
 const updateItem = async (table, conditionParams, updateParams) => {
-    console.log(table, conditionParams, updateParams)
     let sentence = `UPDATE  ${table} SET `
     const numParams = Object.keys(updateParams).length
     for (let i = 0; i < numParams; i++) {
@@ -108,7 +153,7 @@ const updateItem = async (table, conditionParams, updateParams) => {
     }
     sentence += `WHERE ${whereConstructor(conditionParams)}`;
     const result = await connection.query(sentence, [...Object.values(updateParams), ...Object.values(conditionParams)])
-    if(result[0].affectedRows === 0){
+    if (result[0].affectedRows === 0) {
         throw {
             status: 400,
             data: `No se ha podido actualizar en ${table}, no se ha localizado el registro`
@@ -128,25 +173,30 @@ const updateItem = async (table, conditionParams, updateParams) => {
 const deleteItem = async (table, object) => {
     try {
         const sentence = `DELETE FROM ${table} WHERE ${Object.keys(object)[0]} = ?`
-        const result = await connection.query(sentence, Object.values(object))
-        if(result[0].affectedRows ===0){
-            throw {
-                status: 400,
-                data: `No se ha podido actualizar en ${table}, no se ha localizado el registro`
-            }
-        };
+        const result = await connection.query(sentence, Object.values(object));
     } catch (error) {
-        
+
         throw {
             status: 500,
             message: error?.data || error.message || 'Error en la conexion con la base de datos'
         }
     }
-
-
-
-
 }
+
+const deleteAllItems =  async (table) => {
+   
+    try {
+        const sentence = `DELETE FROM ${table}`;
+        await connection.query(sentence);
+    } catch (error) {
+
+        throw {
+            status: 500,
+            message: error?.data || error.message || 'Error en la conexion con la base de datos'
+        }
+    }
+}
+
 
 /**
  *
@@ -207,8 +257,11 @@ const getKeyOperator = (key) => {
 module.exports = {
     getAllItems,
     getOneItem,
+    getOneItemNoFilterDelete,
     findItems,
     addItem,
     deleteItem,
+    deleteAllItems,
     updateItem,
+    findItemsNoFilterDelete
 }

@@ -14,7 +14,7 @@ const sendRegisterMail = async(user)=>{
             html:`
                 <h1>Bienvenido a perfecto inquilino ${user.nombre}</h1>
                 <p>Para procecder a la activación de mail haga click en el siguiente enlace</p>
-                <a href="http://${WEB_HOST}:${PORT}/api/v1/users/${user.id_usuario}/activate_user/${user.activated_code}" > 
+                <a href="http://${WEB_HOST}:${PORT}/api/v1/users/${user.id_usuario}/activate-user/${user.activated_code}" > 
                     ACTIVA TU USUARIO
                 </a>
                 `
@@ -23,7 +23,7 @@ const sendRegisterMail = async(user)=>{
     }catch(error){
         throw{
             status: error?.status || 500,
-            message: error?.message || error.data
+            message: error?.message || 'No se ha podido enviar el correod de activación de usuario'
         }
     }
     
@@ -42,11 +42,10 @@ const sendChangePasswordAlert = async(user)=>{
                 `
             }
         const data = await transporter.sendMail(mailData)
-        console.log(data)
     }catch(error){
         throw{
             status: error?.status || 500,
-            message: error?.message || error.data
+            message: error?.message || 'No se ha podido enviar el correo de cambio de password' 
         }
     }
     

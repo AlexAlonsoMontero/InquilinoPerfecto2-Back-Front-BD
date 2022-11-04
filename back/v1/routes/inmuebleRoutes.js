@@ -9,7 +9,7 @@ const { validarCampos } = require('../../middlewares/validarCampos');
 const router = express.Router();
 
 //DATOS PARA VALIDACIÓN
-const notNullAtributes = [
+const stringAtributes = [
     'tipo_via', 'tipo_inmueble', 'calle', 'numero', 'ciudad', 'provincia',
     'comunidad', 'pais', 'cp'
 ]
@@ -21,11 +21,12 @@ const booleanAtributes = [
 
 
 router
-    .post('/:id_usuario',
+    .post('/user/:id_usuario',
         [
-            check(notNullAtributes).notEmpty().isString(),
-            check(numAtributes).isFloat(),
-            check(booleanAtributes).isBoolean(),
+            check(stringAtributes).notEmpty().isString(),
+            check('precio', 'El precio es obligatorio y debe ser un decimal').notEmpty().isNumeric(),
+            check(numAtributes).optional().isFloat(),
+            check(booleanAtributes).optional().isBoolean(),
             validarCampos
         ],
         validateToken,
@@ -36,16 +37,16 @@ router
     .get('/', inmuebleController.getAllInmuebles)
     .get('/:id_inmueble', inmuebleController.getOneInmueble)
     .get('/user/:id_usuario', inmuebleController.getInmueblesByUser)
-    .delete('/:id_inmueble',
+    .delete('/:id_inmueble/user/:id_usuario',
         validateToken,
         validateUser.validateAdministrador,
         inmuebleController.deleteInmueble
     )
-    .put('/:id_inmueble',
+    .put('/:id_inmueble/user/:id_usuario',
         [
-            check(notNullAtributes).notEmpty().isString(),
-            check(numAtributes).isFloat(),
-            check(booleanAtributes).isBoolean(),
+            check(stringAtributes).optional().notEmpty().isString(),
+            check(numAtributes).optional().notEmpty().isFloat(),
+            check(booleanAtributes).optional().notEmpty().isBoolean(),
             validarCampos
         ],
         validateToken,

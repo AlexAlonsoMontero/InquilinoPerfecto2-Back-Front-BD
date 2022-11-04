@@ -12,7 +12,11 @@ Los usuarios podrán ser de 4 tipos:
 - Inquilino y Casero
 - Administrador
 
-IMPORTANTE: Aunque los distitnos tipos de usuarios puedan dar de baja inmuebles, o reservas o así mismos, en ningun caso serán borrados de la 
+IMPORTANTE: Aunque los distitnos tipos de usuarios puedan dar de baja inmuebles, o reservas o así mismos, en ningun caso serán borrados de la base de datos.
+
+Los anuncios  podrán ser para alquiler mensual y/o indefinido
+
+El alquiler de los inmuebles se hará de forma mensual, a partir de un año el alquiler se considera indefinico.
 
  
 OPERACIONES POR USUARIO:
@@ -81,10 +85,23 @@ SOLAMENTE EL USUARIO ADMINISTRADOR PODRÁ ELIMINAR INMUEBLES DE LA BASE DE DATOS
               
 
 
-FUNCIONALIDADES:
+## FUNCIONALIDADES:
+
+### CUALQUIER USUARIO
 
 • REGISTRO USUARIO:
-- El usuario se registrará con un nombre de usuario , un password, sus datos personales, y un avatar con una imagen que podrá escoger, del disco duro, o pondremos una por defecto. En el momento del registro se le enviará un mail para activar al usuario
+- El usuario se registrará con un nombre de usuario , un password, sus datos personales, y un avatar con una imagen que podrá escoger, del disco duro, o pondremos una por defecto. En el momento del registro se le enviará un mail para activar al usuario.
+- Si el usuario ha sido dado de baja, se enviará un error, deberá hacer login, y en ese momento se le enviará un mail de confirmación para reactivar el usuario.
+
+. LOGIN:
+-  El usuario se podrá loguear con mail o con username.
+-  En caso de detectar que elusuario está de baja, se enviará un mail para reactivación de cuenta.
+
+### CUALQUIER USUARIO LOGADO:
+- Acceder y modificar su pefil de usuario, incluida la contraseña
+- Solicitar la baja del sistema. En ese momentolos datos  no serán visibles, pero no se borrarán de la base de datos.
+-
+
 
 • PROCESO DE ALQUILER INMUEBLE:
 - Unicamente el usuario registrado como inquilino, inquilino/casero o el administrador, podrán enviar una solicitud de alquiler.
@@ -94,3 +111,8 @@ FUNCIONALIDADES:
 • REGISTRO USUARIO:
 
 - Para realizar una reseña el alquiler debe estar finalizado, el usuario podrá hacer una reseña del inquilino, y el inquilino podrá realizar una reseña sobre el inmueble.
+- Solamente el administrador o el autor de la reseña la podrá borrar, las reseñas borradas, dejarán de estar visibles, pero no se eliminarán de la base de datos.
+
+### USUARIO ADMINISTRADOR:
+- Podrá hacer toda las gestiones que el resto de usuarios, y además podrá:
+- BOORAR ENTRADAS DE LA BASE DE DATOS

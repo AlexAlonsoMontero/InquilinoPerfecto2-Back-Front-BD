@@ -1,9 +1,4 @@
 const userService = require('../services/userServices');
-const { sendRegisterMail } = require('../utils/smtp');
-//TODO revisar seguridad, no devolver contraseña
-//TODO revisar funcionalidad cambiar contraseña
-//TODO crear método no visibles, borrar de la base de datos sólo lo puede hacer el administrador
-const table = "usuarios"
 
 
 const getAllUsers = async (request, response) => {
@@ -35,6 +30,7 @@ const getOneUser = async (request, response) => {
             .status(200)
             .send({
                 status: "OK",
+                info: 'Obtenido usuario con éxito',
                 user
             })
 
@@ -50,12 +46,15 @@ const getOneUser = async (request, response) => {
 
 const createNewUser = async (request, response) => {
     try {
-        const newUser = await userService.createNewUser(request.body);
+        const { dbUser, info } = await userService.createNewUser(request.body);
+
+
         response
             .status(200)
             .send({
                 status: "OK",
-                newUser
+                info: info.info,
+                user: dbUser
             })
     } catch (error) {
         response
@@ -76,15 +75,11 @@ const login = async (request, response) => {
         user.password = request.body.password;
         const { token, user: loggedUser } = await userService.login(user);
 
-
         response.header('auth-token', token).json({
             status: 200,
-            data: {
-                username: loggedUser.username,
-                id_usuario: loggedUser.id_usuario,
-                token
-            }
-
+            username: loggedUser.username,
+            id_usuario: loggedUser.id_usuario,
+            token
 
         })
     } catch (error) {
@@ -92,7 +87,7 @@ const login = async (request, response) => {
             .status(error?.status || 500)
             .send({
                 status: "FAILED",
-                message: error?.message || 'Error en el login.' ,
+                message: error?.message || 'Error en el login.',
                 code: error?.status || 500
             })
     }
@@ -170,15 +165,29 @@ const activateUser = async (request, response) => {
     }
 }
 
-const changePassword = async (request, response)=>{
+const changePassword = async (request, response) => {
     try {
         await userService.changePassword(request.params, request.body),
+            response
+                .status(200)
+                .send({
+                    status: "OK",
+                    info: "password actualizado"
+                })
+    } catch (error) {
         response
-            .status(200)
+            .status(error?.status || 500)
             .send({
-                status: "OK",
-                info: "password actualizado"
+                status: "FAILED",
+                info: error?.message || 'No se ha podido actualizar el usuario' ,
+                code: error?.status || 500
             })
+    }
+}
+
+const deactivateUser = async (request, response) => {
+    try {
+
     } catch (error) {
         response
             .status(error?.status || 500)
@@ -189,6 +198,8 @@ const changePassword = async (request, response)=>{
             })
     }
 }
+
+
 
 module.exports = {
     getAllUsers,
