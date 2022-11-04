@@ -10,6 +10,7 @@ const validateInquilino = (request, response, next) => {
 }
 
 const validateCasero = (request, response, next) => {
+    
     const typeOfUser = request.auth.user.tipo;
     if (typeOfUser === "CASERO" || typeOfUser === "INQUILINO/CASERO" || typeOfUser === "ADMINISTRADOR") {
         next()

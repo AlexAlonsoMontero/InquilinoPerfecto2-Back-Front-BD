@@ -1,10 +1,10 @@
 
 const userRouterV1 = require('./v1/routes/userRoutes');
-const inmuebleUserV1 = require('./v1/routes/inmuebleRoutes');
+const inmuebleRouterV1 = require('./v1/routes/inmuebleRoutes');
+const anuncioRouterV1 = require( './v1/routes/anuncioRoutes');
 
 const express = require('express');
 const morgan = require ('morgan');
-
 
 const app = express();
 
@@ -15,9 +15,8 @@ app.use(morgan('combined')); //formato: combined... ver doc https://www.npmjs.co
 
 //Routes
 app.use('/api/v1/users', userRouterV1);
-app.use('/api/v1/inmuebles', inmuebleUserV1);
-
-
+app.use('/api/v1/inmuebles', inmuebleRouterV1);
+app.use('/api/v1/anuncios', anuncioRouterV1);
 
 const port = process.env.PORT
 app.listen(port,()=>{

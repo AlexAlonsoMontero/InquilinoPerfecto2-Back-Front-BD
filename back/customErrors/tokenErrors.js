@@ -1,7 +1,8 @@
 class ErrorInvalidToken  extends Error {
-    constructor(){
+    constructor(personMessage = 'No se ha podido validar la sesión'){
+        super();
         this.name = 'invalidToken'
-        this.userMessage = "No se ha podido validar la sesión"
+        this.userMessage = personMessage
         this.code = 403
         this.message = "Error en la validación del token"
     }

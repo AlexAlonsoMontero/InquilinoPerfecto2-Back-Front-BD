@@ -1,10 +1,8 @@
 const request = require('supertest');
 const expect = require('chai').expect;
 
-const { deleteAllItems } = require('../../../db/generalRepository');
-const { createNewUser, getOneUser, login } = require('../../../services/userServices');
+const userTestOperations = require ('../../helpers/userTestOperations')
 
-const table = 'inmuebles'
 const users = require('../../data/users.json');
 const inmuebles = require('../../data/inmuebles.json');
 const deleteTables = require('../../helpers/deleteTables');
@@ -29,9 +27,10 @@ describe('Testing rutas de Inmueblees', () => {
         //Borrado de datos en base de datos
         await deleteTables()
         //Creamos usuario con el que  trabajar en el testing
-        const user = await createNewUser(users[0]);
+        const user = await userTestOperations.createTestUser(users[0]);        
         dbUser = user.dbUser
-        token = await login({
+        //logueamos usuario y obtenemos toquen
+        token = await userTestOperations.loginTestUser({
             username: users[0].username,
             password: users[0].password
         })
@@ -41,7 +40,7 @@ describe('Testing rutas de Inmueblees', () => {
 
         it(`Inmueble ${cont + 1}  Debe devolver info, y status 200 `, async () => {
             const res = await request(baseUrl)
-                .post(`/${dbUser.id_usuario}`)
+                .post(`/user/${dbUser.id_usuario}`)
                 .send(inmuebles[cont])
                 .auth(token.token, { type: 'bearer' });
             expect(res.status).to.equal(200);
@@ -77,12 +76,14 @@ describe('Testing rutas de Inmueblees', () => {
     it('Actualizar inmueble PUT /:id_inmueble devuelve status 200, info = Inmueble actualizado', async () => {
         const dbInmuebles = await getAllInmuebles()
         const res = await request(baseUrl)
-            .put(`/${dbInmuebles[0].id_inmueble}`)
+            .put(`/${dbInmuebles[0].id_inmueble}/user/${dbUser.id_usuario}`)
             .auth(token.token, { type: 'bearer' })
             .send({
                 calle: 'Calle de prueba',
                 metros_2: 10,
                 piscina: true
             })
+        expect ( res.status ).to.equal( 200 )
+        expect (res.body.info).to.equal('Inmueble actualizado')
     })
 })

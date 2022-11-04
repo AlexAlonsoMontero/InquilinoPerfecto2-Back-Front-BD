@@ -2,13 +2,14 @@ const { deleteAllItems } = require("../../db/generalRepository");
 
 const deleteTables = async()=>{
     try{
+        await deleteAllItems('anuncios');
         await deleteAllItems('inmuebles');
         await deleteAllItems('usuarios');
 
-    }catch{
+    }catch(error){
         throw{
             status: 500,
-            meessage: "No se ha podido borrar alguna de las tablas"
+            meessage: error
         }
     }
 }

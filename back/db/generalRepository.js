@@ -75,6 +75,7 @@ const getOneItemNoFilterDelete = async (table, param) => {
  * @param {string} table
  * @param {object} param Objetos de request.query donde quey es
  * la clave de búsqueda y los values el valor que buscamos
+ * @param {object} deleted  objeto booleano que indica si ha sido dado de baja el anuncio o no
  * @returns {[object]} Devuelve un objeto con los valores localizdos dela base de datos
  * @description Construye con ayudas de otros métodos una consulta
  *  con condiciones que nos vale para cualquier tabla y cualquier condicion simple
@@ -82,6 +83,28 @@ const getOneItemNoFilterDelete = async (table, param) => {
 const findItems = async (table, params, deleted = false) => {
     try {
         const condition = `SELECT * FROM ${table} WHERE  ${whereConstructor(params)} AND deleted =${deleted}`
+        const question = await connection.query(condition, Object.values(params))
+        return question[0]
+    } catch (error) {
+        throw {
+            status: 500,
+            message: error?.message || error
+        }
+    }
+}
+
+/**
+ *
+ * @param {string} table
+ * @param {object} param Objetos de request.query donde quey es
+ * la clave de búsqueda y los values el valor que buscamos
+ * @returns {[object]} Devuelve un objeto con los valores localizdos dela base de datos
+ * @description Construye con ayudas de otros métodos una consulta
+ *  con condiciones que nos vale para cualquier tabla y cualquier condicion simple
+ */
+const findItemsNoFilterDelete = async (table, params) => {
+    try {
+        const condition = `SELECT * FROM ${table} WHERE  ${whereConstructor(params)}`
         const question = await connection.query(condition, Object.values(params))
         return question[0]
     } catch (error) {
@@ -240,4 +263,5 @@ module.exports = {
     deleteItem,
     deleteAllItems,
     updateItem,
+    findItemsNoFilterDelete
 }

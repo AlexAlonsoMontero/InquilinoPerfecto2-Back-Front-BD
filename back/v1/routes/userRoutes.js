@@ -18,7 +18,7 @@ router
             check('password', 'Longitud mínima del password 6').isLength({ min: 6 }).notEmpty(),
             check('email').isEmail(),
             check('tipo').custom(customValidations.validateUserTipo),
-            check('avatar').notEmpty(),
+            check('avatar').optional().notEmpty(),
             check('nombre').notEmpty(),
             check('apellidos').notEmpty(),
             validarCampos
