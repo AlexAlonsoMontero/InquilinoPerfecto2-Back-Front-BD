@@ -12,7 +12,11 @@ Los usuarios podrán ser de 4 tipos:
 - Inquilino y Casero
 - Administrador
 
-IMPORTANTE: Aunque los distitnos tipos de usuarios puedan dar de baja inmuebles, o reservas o así mismos, en ningun caso serán borrados de la 
+IMPORTANTE: Aunque los distitnos tipos de usuarios puedan dar de baja inmuebles, o reservas o así mismos, en ningun caso serán borrados de la base de datos.
+
+Los anuncios  podrán ser para alquiler mensual y/o indefinido
+
+El alquiler de los inmuebles se hará de forma mensual, a partir de un año el alquiler se considera indefinico.
 
  
 OPERACIONES POR USUARIO:

@@ -1,7 +1,6 @@
 
 const userRouterV1 = require('./v1/routes/userRoutes');
 const inmuebleRouterV1 = require('./v1/routes/inmuebleRoutes');
-const anuncioRouterV1 = require( './v1/routes/anuncioRoutes');
 
 const express = require('express');
 const morgan = require ('morgan');
@@ -16,7 +15,6 @@ app.use(morgan('combined')); //formato: combined... ver doc https://www.npmjs.co
 //Routes
 app.use('/api/v1/users', userRouterV1);
 app.use('/api/v1/inmuebles', inmuebleRouterV1);
-app.use('/api/v1/anuncios', anuncioRouterV1);
 
 const port = process.env.PORT
 app.listen(port,()=>{
@@ -26,4 +24,4 @@ app.listen(port,()=>{
 
 module.exports = {app};
 
-//TODO cuando se da de baja ( deleted true, un usuario poner deleted tu todos los inmuebles y anuncios)
+//TODO cuando se da de baja ( deleted true, un usuario poner deleted tu todos los inmuebles )

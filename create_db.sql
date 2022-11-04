@@ -26,6 +26,8 @@ CREATE TABLE usuarios(
 CREATE TABLE inmuebles (
 	id_inmueble INT UNSIGNED NOT NULL AUTO_INCREMENT,
     fk_usuario  INT UNSIGNED NOT NULL,
+    precio FLOAT(8,2) NOT NULL,
+    dipnibilidad ENUM ('MENSUAL', 'ANUAL', 'MENSUAL/ANUAL') DEFAULT 'MENSUAL',
 	tipo_via ENUM ('CALLE','AVENIDA','CAMINO','CARRETERA','OTROS') DEFAULT 'OTROS',
 	fecha_alta TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	tipo_inmueble ENUM ('PISO','ESTUDIO','CASA','ADOSADO','OTROS'),
@@ -68,18 +70,6 @@ CREATE TABLE fotos_inmuebles (
     REFERENCES inmuebles(id_inmueble)
     ON DELETE CASCADE,
     CONSTRAINT PK_fotos_inmuebles PRIMARY KEY (id_foto)
-);
-
-CREATE TABLE anuncios (
-    id_anuncio INT UNSIGNED NOT NULL AUTO_INCREMENT,
-    precio FLOAT(8,2),
-    fk_inmueble INT UNSIGNED NOT NULL,
-    fecha_alta TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-	deleted BOOLEAN DEFAULT FALSE,
-    delete_date TIMESTAMP DEFAULT NULL,
-    CONSTRAINT FK_anuncios_inmuebles FOREIGN KEY (fk_inmueble)
-    REFERENCES inmuebles(id_inmueble),
-    CONSTRAINT PK_anuncios PRIMARY KEY (id_anuncio)
 );
 
 

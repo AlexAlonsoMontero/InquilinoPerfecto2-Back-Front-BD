@@ -2,6 +2,7 @@
     {
         "tipo_via": "CALLE",
         "fecha_alta": "2022-10-15T16:00:00.000Z",
+        "precio": 450,
         "tipo_inmueble": "PISO",
         "lng": "-8.715900",
         "lat": "42.231180",
@@ -27,6 +28,7 @@
     }, {
         "tipo_via": "CALLE",
         "fecha_alta": "2022-10-15T16:02:00.000Z",
+        "precio": 400,
         "tipo_inmueble": "PISO",
         "lng": "-8.715900",
         "lat": "42.231180",
@@ -53,6 +55,7 @@
     {
         "tipo_via": "CALLE",
         "fecha_alta": "2022-10-15T17:02:00.000Z",
+        "precio": 350,
         "tipo_inmueble": "PISO",
         "lng": "-8.715900",
         "lat": "42.231180",
@@ -78,6 +81,7 @@
     }, {
         "tipo_via": "CALLE",
         "fecha_alta": "2022-10-17T16:18:00.000Z",
+        "precio": "310",
         "tipo_inmueble": "PISO",
         "lng": "-8.715900",
         "lat": "42.231180",
@@ -95,9 +99,9 @@
         "amueblado": 1,
         "calefaccion": 1,
         "aire_acondicionado": 1,
-        "jardin": 0,
+        "jardin": 1,
         "terraza": 0,
-        "ascensor": 0,
+        "ascensor": 1,
         "piscina": 0,
         "wifi": 1
         

@@ -24,6 +24,7 @@ router
     .post('/user/:id_usuario',
         [
             check(stringAtributes).notEmpty().isString(),
+            check('precio', 'El precio es obligatorio y debe ser un decimal').notEmpty().isNumeric(),
             check(numAtributes).optional().isFloat(),
             check(booleanAtributes).optional().isBoolean(),
             validarCampos

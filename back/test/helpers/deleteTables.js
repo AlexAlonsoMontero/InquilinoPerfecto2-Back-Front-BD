@@ -2,7 +2,6 @@ const { deleteAllItems } = require("../../db/generalRepository");
 
 const deleteTables = async()=>{
     try{
-        await deleteAllItems('anuncios');
         await deleteAllItems('inmuebles');
         await deleteAllItems('usuarios');
 

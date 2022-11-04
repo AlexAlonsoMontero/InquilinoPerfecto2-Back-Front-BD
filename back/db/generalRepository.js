@@ -75,7 +75,7 @@ const getOneItemNoFilterDelete = async (table, param) => {
  * @param {string} table
  * @param {object} param Objetos de request.query donde quey es
  * la clave de búsqueda y los values el valor que buscamos
- * @param {object} deleted  objeto booleano que indica si ha sido dado de baja el anuncio o no
+ * @param {object} deleted  objeto booleano que indica si ha sido dado de baja o no
  * @returns {[object]} Devuelve un objeto con los valores localizdos dela base de datos
  * @description Construye con ayudas de otros métodos una consulta
  *  con condiciones que nos vale para cualquier tabla y cualquier condicion simple
