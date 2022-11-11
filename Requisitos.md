@@ -14,7 +14,9 @@ Los usuarios podrán ser de 4 tipos:
 
 IMPORTANTE: Aunque los distitnos tipos de usuarios puedan dar de baja inmuebles, o reservas o así mismos, en ningun caso serán borrados de la base de datos.
 
-Los anuncios  podrán ser para alquiler mensual y/o indefinido
+ANUNCIOS  
+ - Podrán ser para alquiler mensual y/o indefinido
+ 
 
 El alquiler de los inmuebles se hará de forma mensual, a partir de un año el alquiler se considera indefinico.
 

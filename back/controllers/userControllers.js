@@ -47,8 +47,6 @@ const getOneUser = async (request, response) => {
 const createNewUser = async (request, response) => {
     try {
         const { dbUser, info } = await userService.createNewUser(request.body);
-
-
         response
             .status(200)
             .send({

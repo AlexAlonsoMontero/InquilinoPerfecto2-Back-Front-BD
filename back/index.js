@@ -1,9 +1,23 @@
 
 const userRouterV1 = require('./v1/routes/userRoutes');
 const inmuebleRouterV1 = require('./v1/routes/inmuebleRoutes');
+ //pp
+const multer = require('multer');
+let storage = multer.diskStorage({
+    destination: ( request, file, cb)=>{
+        cb(null,'./uploads')
+    },
+    filename: (request, file, cb)=>{
+        cb(null, Date.now()+ file.fieldname);
+    }
+});
 
+const upload = multer({ storage: storage})
+
+//*********** */
 const express = require('express');
 const morgan = require ('morgan');
+const { request } = require('express');
 
 const app = express();
 
@@ -15,6 +29,14 @@ app.use(morgan('combined')); //formato: combined... ver doc https://www.npmjs.co
 //Routes
 app.use('/api/v1/users', userRouterV1);
 app.use('/api/v1/inmuebles', inmuebleRouterV1);
+
+
+//PRUEBAS
+app.post('/pruebas',upload.single('file'), (request,response)=>{
+    console.log(request.body)
+    response.send('ok')
+})
+
 
 const port = process.env.PORT
 app.listen(port,()=>{

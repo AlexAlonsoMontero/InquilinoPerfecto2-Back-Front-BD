@@ -1,4 +1,5 @@
 const { response } = require('express');
+
 const inmuebleService = require('../services/inmuebleServices');
 
 const createNewInmueble = async (request, response) => {
