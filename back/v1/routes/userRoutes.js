@@ -5,8 +5,10 @@ const customValidations = require('../../helpers/customValidatons')
 const userController = require('../../controllers/userControllers');
 const { validateToken } = require('../../middlewares/validateToken');
 const validateUser = require('../../middlewares/validarTypeUser');
+const {  subirUserAvatar } = require('../../middlewares/subirFicheros');
 
 
+const uploadAvatar = subirUserAvatar()
 const router = express.Router();
 
 router
@@ -24,6 +26,15 @@ router
             validarCampos
         ]
         , userController.createNewUser)
+    .patch('/:id_usuario/avatar',
+        validateToken,
+        [
+            check('id_usuario', 'Id usuario es obligatorio').notEmpty(),
+            validarCampos
+        ],
+        uploadAvatar.any('file'),
+        userController.addUserAvatar
+    )
     .post('/login',
         [
             oneOf([
@@ -53,6 +64,7 @@ router
     )
     .get('/find', userController.getOneUser)
     .get('/:id_usuario/activate-user/:activated_code', userController.activateUser)
+    .patch('/:id_usuario/deactivate-user', userController.deactivateUser)
     .put('/:id_usuario/change-password',
         validateToken,
         userController.changePassword

@@ -177,7 +177,7 @@ const changePassword = async (request, response) => {
             .status(error?.status || 500)
             .send({
                 status: "FAILED",
-                info: error?.message || 'No se ha podido actualizar el usuario' ,
+                info: error?.message || 'No se ha podido actualizar el usuario',
                 code: error?.status || 500
             })
     }
@@ -185,6 +185,36 @@ const changePassword = async (request, response) => {
 
 const deactivateUser = async (request, response) => {
     try {
+        await userService.deactivateUser(request.params);
+        response
+            .status(200)
+            .send({
+                status: 'OK',
+                info: 'Usuario dado de baja ok'
+            })
+    } catch (error) {
+        response
+            .status(error?.status || 500)
+            .send({
+                status: "FAILED",
+                info: { error: error?.message || 'Error al dar de baja al usuario' },
+                code: error?.status || 500
+            })
+    }
+}
+
+const addUserAvatar = async (request, response) => {
+    try {
+        const avatar = request.files.length > 0
+            ? request.files[0].path
+            : process.env.USER_DEFAULT_AVATAR_ROUTE
+        await userService.updateUser(request.params, { avatar: avatar });
+        response
+            .status(200)
+            .send({
+                status: "OK",
+                info: "Avatar actualizado correctamente"
+            })
 
     } catch (error) {
         response
@@ -200,12 +230,14 @@ const deactivateUser = async (request, response) => {
 
 
 module.exports = {
+    activateUser,
+    addUserAvatar,
+    changePassword,
+    createNewUser,
+    deactivateUser,
+    deleteUser,
     getAllUsers,
     getOneUser,
-    createNewUser,
     login,
-    deleteUser,
     updateUser,
-    activateUser,
-    changePassword
 }

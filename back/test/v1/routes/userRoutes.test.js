@@ -1,6 +1,6 @@
 const request = require('supertest');
 const expect = require("chai").expect;
-
+const path = require('path')
 const { getAllUsers, getOneUser } = require('../../../services/userServices');
 const deleteTables = require('../../helpers/deleteTables');
 
@@ -54,7 +54,7 @@ describe("Tests para las rutas de user", () => {
             expect(res.body.user.username).to.equal(users[0].username)
         })
     });
-    describe('LOGIN Y CHANGE PASSWORD', () => {
+    describe('TESTEANDO: LOGIN, CHANGE PASSWORD, OPERACIONES AVATAR', () => {
         let token = '';
         it('login devolver status 200 verificamos username ', async () => {
             const res = await request(baseUrl).post('/login')
@@ -70,6 +70,7 @@ describe("Tests para las rutas de user", () => {
 
 
         })
+        
         it('deve devolver status 200 info = password actualizado', async () => {
             const dbUser = await getOneUser({ username: users[0].username });
             const res = await request(baseUrl)
@@ -78,11 +79,24 @@ describe("Tests para las rutas de user", () => {
                     newPassword: users[0].password + '1'
                 })
                 .auth(token, { type: 'bearer' })
-            expect( res.status ).to.equal( 200 );
-           
-            // expect( res.body.info ).to.equal( 'password actualizado' );
+            expect(res.status).to.equal(200);
+            expect(res.body.info).to.equal('password actualizado');
         })
+
+        it('POST /:id_usuario/avatar -> status: 200 info Avatar actualizado correctamente ', async () => {
+            const dbUser = await getOneUser({ username: users[0].username });
+            
+            const res = await request(baseUrl)
+                .patch(`/${dbUser.id_usuario}/avatar`)
+                .attach("file", path.resolve('./test/assets/gitHub-NoBack.png'))
+                .auth(token, { type: 'bearer' })
+            
+            expect(res.status).to.equal(200)
+            expect(res.body.info).to.equal('Avatar actualizado correctamente')
+        })
+
     })
+
 
 
 

@@ -38,7 +38,8 @@ const createNewUser = async (newUserData) => {
         const newUser = {
             ...newUserData,
             activated_code: activated_code,
-            password: codePassword
+            password: codePassword,
+            avatar: process.env.USER_DEFAULT_AVATAR_ROUTE
         }
         await dbRepository.addItem(table, newUser);
         const dbUser = await getOneUser({ username: newUser.username })
@@ -119,13 +120,34 @@ const activatedUser = async (id_usuario, activated_code) => {
             activated_code: activated_code
         }
         const user = await getOneUser(userParams);
-        const updatedUser = await updateUser({ id_usuario: userParams.id_usuario }, { activated_at: moment().tz('Europe/Spain').format('YYYY-MM-DD HH:mm'), deleted: false });
+        const updatedUser = await updateUser({ id_usuario: userParams.id_usuario }, { 
+            activated_at: moment().tz('Europe/Spain').format('YYYY-MM-DD HH:mm'), 
+            deleted: false,
+            deleted_date: null
+        }
+            );
     } catch (error) {
         throw {
             status: error.status,
             message: error?.data || error
         }
     }
+}
+
+const deactivateUser = async (id_usuario)=>{
+    try {
+        await dbRepository.updateItem(table, id_usuario, {
+            activated_at: null,
+            deleted: true,
+            deleted_date: moment().tz('Europe/Spain').format('YYYY-MM-DD HH:mm')
+        })
+    } catch (error) {
+        throw {
+            status: error.status,
+            message: error?.data || error
+        }
+    }
+
 }
 
 const changePassword = async (id_usuario, passwords) => {
@@ -169,13 +191,15 @@ const generateToken = (dbUser) => {
 
 
 
+
 module.exports = {
+    activatedUser,
+    changePassword,
+    createNewUser,
+    deactivateUser,
+    deleteUser,
     getAllUsers,
     getOneUser,
-    createNewUser,
     login,
-    deleteUser,
     updateUser,
-    activatedUser,
-    changePassword
 }
