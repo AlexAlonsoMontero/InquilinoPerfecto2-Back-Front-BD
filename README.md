@@ -7,7 +7,7 @@ Las tecnologías utilizadas para este softwares son:
 
 - MySql
 - NodeJS (JavaScript)
-
+- Mailjet
 ## Testing:
 
 - Mocha
@@ -41,6 +41,9 @@ npm start
 "nodemon": "^2.0.15",
 "supertest": "^6.3.0"
 ```
+
+## Configuración mailjet
+- El usuario SMTP y el password, son la apikey y secretapikey en 
 
 ## Requisitos
 
