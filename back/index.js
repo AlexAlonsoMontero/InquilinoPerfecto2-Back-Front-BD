@@ -13,10 +13,11 @@ app.use(express.json());
 app.use(morgan('combined')); //formato: combined... ver doc https://www.npmjs.com/package/morgan
 
 //Routes
+
 app.use('/api/v1/users', userRouterV1);
 app.use('/api/v1/inmuebles', inmuebleRouterV1);
 
-const port = process.env.PORT
+const port = process.env.WEB_PORT
 app.listen(port,()=>{
     console.log(`Server runing at port ${port}`)
 });

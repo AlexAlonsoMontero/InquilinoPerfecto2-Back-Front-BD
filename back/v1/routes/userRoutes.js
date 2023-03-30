@@ -11,7 +11,6 @@ const router = express.Router();
 
 router
     .get('/', userController.getAllUsers)
-    .get('/:id_usuario', userController.getOneUser)
     .post('/',
         [
             check('username', 'El nombre de usuario es obligatorio y la longitud mínima es de 6 caracteres').isLength({ min: 6 }).notEmpty(),
